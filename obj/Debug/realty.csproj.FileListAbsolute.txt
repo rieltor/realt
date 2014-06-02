@@ -1,0 +1,73 @@
+c:\users\vika\documents\visual studio 2013\Projects\realty\realty\bin\Debug\realty.exe
+c:\users\vika\documents\visual studio 2013\Projects\realty\realty\bin\Debug\realty.pdb
+c:\users\vika\documents\visual studio 2013\Projects\realty\realty\obj\Debug\realty.csprojResolveAssemblyReference.cache
+c:\users\vika\documents\visual studio 2013\Projects\realty\realty\obj\Debug\realty.editform.resources
+c:\users\vika\documents\visual studio 2013\Projects\realty\realty\obj\Debug\realty.Form1.resources
+c:\users\vika\documents\visual studio 2013\Projects\realty\realty\obj\Debug\realty.Properties.Resources.resources
+c:\users\vika\documents\visual studio 2013\Projects\realty\realty\obj\Debug\realty.terraeditform.resources
+c:\users\vika\documents\visual studio 2013\Projects\realty\realty\obj\Debug\realty.csproj.GenerateResource.Cache
+c:\users\vika\documents\visual studio 2013\Projects\realty\realty\obj\Debug\realty.exe
+c:\users\vika\documents\visual studio 2013\Projects\realty\realty\obj\Debug\realty.pdb
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\realty\obj\Debug\realty.exe
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\realty\obj\Debug\realty.pdb
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\realty\obj\Debug\realty.csprojResolveAssemblyReference.cache
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\realty\obj\Debug\realty.editform.resources
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\realty\obj\Debug\realty.Form1.resources
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\realty\obj\Debug\realty.LoadXML.resources
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\realty\obj\Debug\realty.Properties.Resources.resources
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\realty\obj\Debug\realty.terraeditform.resources
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\realty\obj\Debug\realty.csproj.GenerateResource.Cache
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\realty\obj\Debug\realty.exe.licenses
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\realty\bin\Debug\realty.exe
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\realty\bin\Debug\realty.pdb
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\realty\bin\Debug\SharpCompress.dll
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\bin\Debug\realty.exe
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\bin\Debug\realty.pdb
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\bin\Debug\MySql.Data.dll
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\bin\Debug\SharpCompress.dll
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\obj\Debug\realty.editform.resources
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\obj\Debug\realty.Form1.resources
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\obj\Debug\realty.LoadXML.resources
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\obj\Debug\realty.Properties.Resources.resources
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\obj\Debug\realty.terraeditform.resources
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\obj\Debug\realty.csproj.GenerateResource.Cache
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\obj\Debug\realty.exe.licenses
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\obj\Debug\realty.exe
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\obj\Debug\realty.pdb
+D:\Sveta\realty\realty\obj\Debug\realty.exe
+D:\Sveta\realty\realty\obj\Debug\realty.pdb
+D:\Sveta\realty\realty\obj\Debug\realty.csprojResolveAssemblyReference.cache
+D:\Sveta\realty\realty\obj\Debug\realty.AgentsForm.resources
+D:\Sveta\realty\realty\obj\Debug\realty.editform.resources
+D:\Sveta\realty\realty\obj\Debug\realty.Form1.resources
+D:\Sveta\realty\realty\obj\Debug\realty.LoadXML.resources
+D:\Sveta\realty\realty\obj\Debug\realty.Properties.Resources.resources
+D:\Sveta\realty\realty\obj\Debug\realty.terraeditform.resources
+D:\Sveta\realty\realty\obj\Debug\realty.csproj.GenerateResource.Cache
+D:\Sveta\realty\realty\obj\Debug\realty.exe.licenses
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\obj\Debug\realty.AgentsForm.resources
+D:\Sveta\realty\realty\bin\Debug\realty.exe
+D:\Sveta\realty\realty\bin\Debug\realty.pdb
+D:\Sveta\realty\realty\bin\Debug\SharpCompress.dll
+D:\Sveta\realty\realty\obj\Debug\realty.AddEditAgencyFr.resources
+D:\Sveta\realty\realty\obj\Debug\realty.AddEditAgentFr.resources
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\obj\Debug\realty.AddEditAgencyFr.resources
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\obj\Debug\realty.AddEditAgentFr.resources
+C:\Users\Sveta-PC\Bessveta\c#\realty\realty\obj\Debug\realty.csprojResolveAssemblyReference.cache
+D:\realty\realty\realty\obj\Debug\realty.exe
+D:\realty\realty\realty\obj\Debug\realty.pdb
+D:\realty\realty\realty\bin\Debug\realty.exe
+D:\realty\realty\realty\bin\Debug\realty.pdb
+D:\realty\realty\realty\bin\Debug\MySql.Data.dll
+D:\realty\realty\realty\bin\Debug\SharpCompress.dll
+D:\realty\realty\realty\obj\Debug\realty.csprojResolveAssemblyReference.cache
+D:\realty\realty\realty\obj\Debug\realty.AddEditAgencyFr.resources
+D:\realty\realty\realty\obj\Debug\realty.AddEditAgentFr.resources
+D:\realty\realty\realty\obj\Debug\realty.AgentsForm.resources
+D:\realty\realty\realty\obj\Debug\realty.editform.resources
+D:\realty\realty\realty\obj\Debug\realty.Form1.resources
+D:\realty\realty\realty\obj\Debug\realty.LoadXML.resources
+D:\realty\realty\realty\obj\Debug\realty.Properties.Resources.resources
+D:\realty\realty\realty\obj\Debug\realty.terraeditform.resources
+D:\realty\realty\realty\obj\Debug\realty.csproj.GenerateResource.Cache
+D:\realty\realty\realty\obj\Debug\realty.exe.licenses
