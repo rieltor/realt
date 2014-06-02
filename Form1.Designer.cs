@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            DevExpress.XtraGrid.GridLevelNode gridLevelNode2 = new DevExpress.XtraGrid.GridLevelNode();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
@@ -84,10 +85,14 @@
             this.barBtTerraFind = new DevExpress.XtraBars.BarButtonItem();
             this.barBtTerraClear = new DevExpress.XtraBars.BarButtonItem();
             this.barBtAgents = new DevExpress.XtraBars.BarButtonItem();
+            this.beTerraId = new DevExpress.XtraBars.BarEditItem();
+            this.repositoryItemTerraId = new DevExpress.XtraEditors.Repository.RepositoryItemTextEdit();
+            this.beRealtId = new DevExpress.XtraBars.BarEditItem();
+            this.repositoryItemRealtId = new DevExpress.XtraEditors.Repository.RepositoryItemTextEdit();
             this.ribbonPage1 = new DevExpress.XtraBars.Ribbon.RibbonPage();
-            this.ribbonPageGroup1 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-            this.ribbonPageGroup4 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
+            this.ribbonPageGroup5 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPageGroup3 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
+            this.ribbonPageGroup4 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPage2 = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.ribbonPageGroup2 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.repositoryItemCbxFloors = new DevExpress.XtraEditors.Repository.RepositoryItemComboBox();
@@ -131,6 +136,7 @@
             this.TerraFieldsChList = new DevExpress.XtraEditors.CheckedComboBoxEdit();
             this.ribbonMiniToolbar1 = new DevExpress.XtraBars.Ribbon.RibbonMiniToolbar(this.components);
             this.cbxRooms = new DevExpress.XtraBars.BarEditItem();
+            this.ribbonPageGroup1 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.xtraTabControl1)).BeginInit();
             this.xtraTabControl1.SuspendLayout();
@@ -157,6 +163,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemCbxTerraMaxArea)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemCbxTerraCity)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemCbxTerraDistrict)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.repositoryItemTerraId)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.repositoryItemRealtId)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemCbxFloors)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemCbxObjType)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemRadioGroup2)).BeginInit();
@@ -199,7 +207,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 142);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1308, 334);
+            this.panel1.Size = new System.Drawing.Size(1035, 383);
             this.panel1.TabIndex = 1;
             // 
             // xtraTabControl1
@@ -214,7 +222,7 @@
             this.xtraTabControl1.LookAndFeel.UseDefaultLookAndFeel = false;
             this.xtraTabControl1.Name = "xtraTabControl1";
             this.xtraTabControl1.SelectedTabPage = this.xtraTabPage4;
-            this.xtraTabControl1.Size = new System.Drawing.Size(1308, 334);
+            this.xtraTabControl1.Size = new System.Drawing.Size(1035, 383);
             this.xtraTabControl1.TabIndex = 3;
             this.xtraTabControl1.TabPages.AddRange(new DevExpress.XtraTab.XtraTabPage[] {
             this.xtraTabPage1,
@@ -228,7 +236,7 @@
             this.xtraTabPage4.Controls.Add(this.panelControl5);
             this.xtraTabPage4.Controls.Add(this.panelControl6);
             this.xtraTabPage4.Name = "xtraTabPage4";
-            this.xtraTabPage4.Size = new System.Drawing.Size(1157, 328);
+            this.xtraTabPage4.Size = new System.Drawing.Size(884, 377);
             this.xtraTabPage4.Text = "Недвижимость - обмен";
             // 
             // panelControl5
@@ -237,17 +245,20 @@
             this.panelControl5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelControl5.Location = new System.Drawing.Point(0, 55);
             this.panelControl5.Name = "panelControl5";
-            this.panelControl5.Size = new System.Drawing.Size(1157, 273);
+            this.panelControl5.Size = new System.Drawing.Size(884, 322);
             this.panelControl5.TabIndex = 1;
             // 
             // RealtyExchGridC
             // 
             this.RealtyExchGridC.Dock = System.Windows.Forms.DockStyle.Fill;
+            gridLevelNode2.RelationName = "Level1";
+            this.RealtyExchGridC.LevelTree.Nodes.AddRange(new DevExpress.XtraGrid.GridLevelNode[] {
+            gridLevelNode2});
             this.RealtyExchGridC.Location = new System.Drawing.Point(2, 2);
             this.RealtyExchGridC.MainView = this.gridViewExch;
             this.RealtyExchGridC.MenuManager = this.ribbonControl1;
             this.RealtyExchGridC.Name = "RealtyExchGridC";
-            this.RealtyExchGridC.Size = new System.Drawing.Size(1153, 269);
+            this.RealtyExchGridC.Size = new System.Drawing.Size(880, 318);
             this.RealtyExchGridC.TabIndex = 2;
             this.RealtyExchGridC.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridViewExch,
@@ -257,9 +268,9 @@
             // 
             this.gridViewExch.GridControl = this.RealtyExchGridC;
             this.gridViewExch.Name = "gridViewExch";
-            this.gridViewExch.OptionsBehavior.AllowPartialRedrawOnScrolling = false;
-            this.gridViewExch.OptionsBehavior.EditorShowMode = DevExpress.Utils.EditorShowMode.Click;
+            this.gridViewExch.OptionsBehavior.Editable = false;
             this.gridViewExch.CellValueChanging += new DevExpress.XtraGrid.Views.Base.CellValueChangedEventHandler(this.gridViewExch_CellValueChanging);
+            this.gridViewExch.Click += new System.EventHandler(this.gridViewExch_Click);
             this.gridViewExch.DoubleClick += new System.EventHandler(this.gridView4_DoubleClick);
             // 
             // ribbonControl1
@@ -294,9 +305,11 @@
             this.cbxTerraDistrict,
             this.barBtTerraFind,
             this.barBtTerraClear,
-            this.barBtAgents});
+            this.barBtAgents,
+            this.beTerraId,
+            this.beRealtId});
             this.ribbonControl1.Location = new System.Drawing.Point(0, 0);
-            this.ribbonControl1.MaxItemId = 55;
+            this.ribbonControl1.MaxItemId = 81;
             this.ribbonControl1.Name = "ribbonControl1";
             this.ribbonControl1.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] {
             this.ribbonPage1,
@@ -322,8 +335,10 @@
             this.repositoryItemCbxTerraMinArea,
             this.repositoryItemCbxTerraMaxArea,
             this.repositoryItemCbxTerraCity,
-            this.repositoryItemCbxTerraDistrict});
-            this.ribbonControl1.Size = new System.Drawing.Size(1308, 142);
+            this.repositoryItemCbxTerraDistrict,
+            this.repositoryItemTerraId,
+            this.repositoryItemRealtId});
+            this.ribbonControl1.Size = new System.Drawing.Size(1035, 142);
             // 
             // barButtonItem1
             // 
@@ -333,7 +348,6 @@
             this.barButtonItem1.LargeGlyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem1.LargeGlyph")));
             this.barButtonItem1.Name = "barButtonItem1";
             this.barButtonItem1.RibbonStyle = DevExpress.XtraBars.Ribbon.RibbonItemStyles.Large;
-            this.barButtonItem1.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem1_ItemClick);
             // 
             // barBtEditRecord
             // 
@@ -351,6 +365,7 @@
             this.barButtonItem3.Id = 4;
             this.barButtonItem3.Name = "barButtonItem3";
             this.barButtonItem3.RibbonStyle = DevExpress.XtraBars.Ribbon.RibbonItemStyles.Large;
+            this.barButtonItem3.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem3_ItemClick);
             // 
             // BtLoadXML
             // 
@@ -541,6 +556,8 @@
             new DevExpress.XtraEditors.Controls.RadioGroupItem("Коммерческая  недвижимотсь", "Коммерция"),
             new DevExpress.XtraEditors.Controls.RadioGroupItem("Дом", "Дом")});
             this.repositoryItemRdbEstate_type.Name = "repositoryItemRdbEstate_type";
+            this.repositoryItemRdbEstate_type.SelectedIndexChanged += new System.EventHandler(this.repositoryItemRdbEstate_type_SelectedIndexChanged);
+            this.repositoryItemRdbEstate_type.EditValueChanged += new System.EventHandler(this.repositoryItemRdbEstate_type_EditValueChanged);
             // 
             // cbxRoom
             // 
@@ -576,7 +593,6 @@
             this.btCLearSearch.Glyph = ((System.Drawing.Image)(resources.GetObject("btCLearSearch.Glyph")));
             this.btCLearSearch.Id = 38;
             this.btCLearSearch.Name = "btCLearSearch";
-            this.btCLearSearch.RibbonStyle = DevExpress.XtraBars.Ribbon.RibbonItemStyles.Large;
             this.btCLearSearch.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.btCLearSearch_ItemClick);
             // 
             // ChbOldHouse
@@ -701,7 +717,6 @@
             this.barBtTerraClear.Glyph = ((System.Drawing.Image)(resources.GetObject("barBtTerraClear.Glyph")));
             this.barBtTerraClear.Id = 48;
             this.barBtTerraClear.Name = "barBtTerraClear";
-            this.barBtTerraClear.RibbonStyle = DevExpress.XtraBars.Ribbon.RibbonItemStyles.Large;
             this.barBtTerraClear.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barBtTerraClear_ItemClick);
             // 
             // barBtAgents
@@ -714,37 +729,49 @@
             this.barBtAgents.RibbonStyle = DevExpress.XtraBars.Ribbon.RibbonItemStyles.Large;
             this.barBtAgents.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barBtAgents_ItemClick);
             // 
+            // beTerraId
+            // 
+            this.beTerraId.Caption = "Объект #";
+            this.beTerraId.CategoryGuid = new System.Guid("6ffddb2b-9015-4d97-a4c1-91613e0ef537");
+            this.beTerraId.Edit = this.repositoryItemTerraId;
+            this.beTerraId.Id = 55;
+            this.beTerraId.Name = "beTerraId";
+            this.beTerraId.EditValueChanged += new System.EventHandler(this.beTerraId_EditValueChanged);
+            // 
+            // repositoryItemTerraId
+            // 
+            this.repositoryItemTerraId.AutoHeight = false;
+            this.repositoryItemTerraId.Name = "repositoryItemTerraId";
+            // 
+            // beRealtId
+            // 
+            this.beRealtId.Caption = "Объект #";
+            this.beRealtId.CategoryGuid = new System.Guid("6ffddb2b-9015-4d97-a4c1-91613e0ef537");
+            this.beRealtId.Edit = this.repositoryItemRealtId;
+            this.beRealtId.Id = 57;
+            this.beRealtId.Name = "beRealtId";
+            this.beRealtId.EditValueChanged += new System.EventHandler(this.beRealtId_EditValueChanged);
+            // 
+            // repositoryItemRealtId
+            // 
+            this.repositoryItemRealtId.AutoHeight = false;
+            this.repositoryItemRealtId.Name = "repositoryItemRealtId";
+            // 
             // ribbonPage1
             // 
             this.ribbonPage1.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] {
-            this.ribbonPageGroup1,
-            this.ribbonPageGroup4,
-            this.ribbonPageGroup3});
+            this.ribbonPageGroup5,
+            this.ribbonPageGroup3,
+            this.ribbonPageGroup4});
             this.ribbonPage1.Name = "ribbonPage1";
             this.ribbonPage1.Text = "Записи";
             // 
-            // ribbonPageGroup1
+            // ribbonPageGroup5
             // 
-            this.ribbonPageGroup1.AllowTextClipping = false;
-            this.ribbonPageGroup1.Glyph = ((System.Drawing.Image)(resources.GetObject("ribbonPageGroup1.Glyph")));
-            this.ribbonPageGroup1.ItemLinks.Add(this.barButtonItem1);
-            this.ribbonPageGroup1.ItemLinks.Add(this.barBtEditRecord);
-            this.ribbonPageGroup1.ItemLinks.Add(this.barButtonItem3);
-            this.ribbonPageGroup1.Name = "ribbonPageGroup1";
-            this.ribbonPageGroup1.ShowCaptionButton = false;
-            // 
-            // ribbonPageGroup4
-            // 
-            this.ribbonPageGroup4.ItemLinks.Add(this.cbxTerraMinPrice);
-            this.ribbonPageGroup4.ItemLinks.Add(this.cbxTerraMaxPrice);
-            this.ribbonPageGroup4.ItemLinks.Add(this.cbxTerraCity);
-            this.ribbonPageGroup4.ItemLinks.Add(this.cbxTerraMinArea);
-            this.ribbonPageGroup4.ItemLinks.Add(this.cbxTerraMaxArea);
-            this.ribbonPageGroup4.ItemLinks.Add(this.cbxTerraDistrict);
-            this.ribbonPageGroup4.ItemLinks.Add(this.barBtTerraFind);
-            this.ribbonPageGroup4.ItemLinks.Add(this.barBtTerraClear);
-            this.ribbonPageGroup4.Name = "ribbonPageGroup4";
-            this.ribbonPageGroup4.Text = "Параметры поиска земельных участков";
+            this.ribbonPageGroup5.ItemLinks.Add(this.barButtonItem3);
+            this.ribbonPageGroup5.ItemLinks.Add(this.barBtEditRecord);
+            this.ribbonPageGroup5.ItemLinks.Add(this.barButtonItem1);
+            this.ribbonPageGroup5.Name = "ribbonPageGroup5";
             // 
             // ribbonPageGroup3
             // 
@@ -761,10 +788,25 @@
             this.ribbonPageGroup3.ItemLinks.Add(this.cbxWalls);
             this.ribbonPageGroup3.ItemLinks.Add(this.cbxCity);
             this.ribbonPageGroup3.ItemLinks.Add(this.cbxDistrict);
+            this.ribbonPageGroup3.ItemLinks.Add(this.beRealtId);
             this.ribbonPageGroup3.ItemLinks.Add(this.btCLearSearch);
             this.ribbonPageGroup3.ItemLinks.Add(this.btFind);
             this.ribbonPageGroup3.Name = "ribbonPageGroup3";
             this.ribbonPageGroup3.Text = "Параметры поиска недвижимости";
+            // 
+            // ribbonPageGroup4
+            // 
+            this.ribbonPageGroup4.ItemLinks.Add(this.cbxTerraMinPrice);
+            this.ribbonPageGroup4.ItemLinks.Add(this.cbxTerraMaxPrice);
+            this.ribbonPageGroup4.ItemLinks.Add(this.cbxTerraCity);
+            this.ribbonPageGroup4.ItemLinks.Add(this.cbxTerraMinArea);
+            this.ribbonPageGroup4.ItemLinks.Add(this.cbxTerraMaxArea);
+            this.ribbonPageGroup4.ItemLinks.Add(this.cbxTerraDistrict);
+            this.ribbonPageGroup4.ItemLinks.Add(this.beTerraId);
+            this.ribbonPageGroup4.ItemLinks.Add(this.barBtTerraClear);
+            this.ribbonPageGroup4.ItemLinks.Add(this.barBtTerraFind);
+            this.ribbonPageGroup4.Name = "ribbonPageGroup4";
+            this.ribbonPageGroup4.Text = "Параметры поиска земельных участков";
             // 
             // ribbonPage2
             // 
@@ -815,7 +857,7 @@
             this.panelControl6.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelControl6.Location = new System.Drawing.Point(0, 0);
             this.panelControl6.Name = "panelControl6";
-            this.panelControl6.Size = new System.Drawing.Size(1157, 55);
+            this.panelControl6.Size = new System.Drawing.Size(884, 55);
             this.panelControl6.TabIndex = 0;
             // 
             // cbxExchStatus
@@ -861,7 +903,7 @@
             this.xtraTabPage1.Controls.Add(this.panelControl4);
             this.xtraTabPage1.Controls.Add(this.panelControl3);
             this.xtraTabPage1.Name = "xtraTabPage1";
-            this.xtraTabPage1.Size = new System.Drawing.Size(1157, 328);
+            this.xtraTabPage1.Size = new System.Drawing.Size(884, 377);
             this.xtraTabPage1.Text = "Недвижимость - продажа";
             // 
             // panelControl4
@@ -870,7 +912,7 @@
             this.panelControl4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelControl4.Location = new System.Drawing.Point(0, 55);
             this.panelControl4.Name = "panelControl4";
-            this.panelControl4.Size = new System.Drawing.Size(1157, 273);
+            this.panelControl4.Size = new System.Drawing.Size(884, 322);
             this.panelControl4.TabIndex = 1;
             // 
             // RealtySaleGridC
@@ -880,7 +922,7 @@
             this.RealtySaleGridC.MainView = this.gridViewSale;
             this.RealtySaleGridC.MenuManager = this.ribbonControl1;
             this.RealtySaleGridC.Name = "RealtySaleGridC";
-            this.RealtySaleGridC.Size = new System.Drawing.Size(1153, 269);
+            this.RealtySaleGridC.Size = new System.Drawing.Size(880, 318);
             this.RealtySaleGridC.TabIndex = 2;
             this.RealtySaleGridC.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridViewSale,
@@ -890,8 +932,9 @@
             // 
             this.gridViewSale.GridControl = this.RealtySaleGridC;
             this.gridViewSale.Name = "gridViewSale";
-            this.gridViewSale.OptionsBehavior.EditorShowMode = DevExpress.Utils.EditorShowMode.Click;
+            this.gridViewSale.OptionsBehavior.Editable = false;
             this.gridViewSale.CellValueChanging += new DevExpress.XtraGrid.Views.Base.CellValueChangedEventHandler(this.gridViewSale_CellValueChanging);
+            this.gridViewSale.Click += new System.EventHandler(this.gridViewSale_Click);
             this.gridViewSale.DoubleClick += new System.EventHandler(this.gridView1_DoubleClick);
             // 
             // gridView3
@@ -908,7 +951,7 @@
             this.panelControl3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelControl3.Location = new System.Drawing.Point(0, 0);
             this.panelControl3.Name = "panelControl3";
-            this.panelControl3.Size = new System.Drawing.Size(1157, 55);
+            this.panelControl3.Size = new System.Drawing.Size(884, 55);
             this.panelControl3.TabIndex = 0;
             // 
             // cbxSaleStatus
@@ -954,7 +997,7 @@
             this.xtraTabPage2.Controls.Add(this.panelControl2);
             this.xtraTabPage2.Controls.Add(this.panelControl1);
             this.xtraTabPage2.Name = "xtraTabPage2";
-            this.xtraTabPage2.Size = new System.Drawing.Size(1157, 328);
+            this.xtraTabPage2.Size = new System.Drawing.Size(884, 377);
             this.xtraTabPage2.Text = "Недвижимость - аренда";
             // 
             // panelControl2
@@ -963,7 +1006,7 @@
             this.panelControl2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelControl2.Location = new System.Drawing.Point(0, 55);
             this.panelControl2.Name = "panelControl2";
-            this.panelControl2.Size = new System.Drawing.Size(1157, 273);
+            this.panelControl2.Size = new System.Drawing.Size(884, 322);
             this.panelControl2.TabIndex = 1;
             // 
             // RealtyRentGridC
@@ -973,7 +1016,7 @@
             this.RealtyRentGridC.MainView = this.gridViewRent;
             this.RealtyRentGridC.MenuManager = this.ribbonControl1;
             this.RealtyRentGridC.Name = "RealtyRentGridC";
-            this.RealtyRentGridC.Size = new System.Drawing.Size(1153, 269);
+            this.RealtyRentGridC.Size = new System.Drawing.Size(880, 318);
             this.RealtyRentGridC.TabIndex = 3;
             this.RealtyRentGridC.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridViewRent});
@@ -982,8 +1025,9 @@
             // 
             this.gridViewRent.GridControl = this.RealtyRentGridC;
             this.gridViewRent.Name = "gridViewRent";
-            this.gridViewRent.OptionsBehavior.EditorShowMode = DevExpress.Utils.EditorShowMode.Click;
+            this.gridViewRent.OptionsBehavior.Editable = false;
             this.gridViewRent.CellValueChanging += new DevExpress.XtraGrid.Views.Base.CellValueChangedEventHandler(this.gridViewRent_CellValueChanging);
+            this.gridViewRent.Click += new System.EventHandler(this.gridViewRent_Click);
             this.gridViewRent.DoubleClick += new System.EventHandler(this.gridView2_DoubleClick);
             // 
             // panelControl1
@@ -995,7 +1039,7 @@
             this.panelControl1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelControl1.Location = new System.Drawing.Point(0, 0);
             this.panelControl1.Name = "panelControl1";
-            this.panelControl1.Size = new System.Drawing.Size(1157, 55);
+            this.panelControl1.Size = new System.Drawing.Size(884, 55);
             this.panelControl1.TabIndex = 0;
             // 
             // cbxRentStatus
@@ -1041,7 +1085,7 @@
             this.xtraTabPage3.Controls.Add(this.panelControl7);
             this.xtraTabPage3.Controls.Add(this.panelControl8);
             this.xtraTabPage3.Name = "xtraTabPage3";
-            this.xtraTabPage3.Size = new System.Drawing.Size(1157, 328);
+            this.xtraTabPage3.Size = new System.Drawing.Size(884, 377);
             this.xtraTabPage3.Text = "Земельные участки";
             // 
             // panelControl7
@@ -1050,7 +1094,7 @@
             this.panelControl7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelControl7.Location = new System.Drawing.Point(0, 55);
             this.panelControl7.Name = "panelControl7";
-            this.panelControl7.Size = new System.Drawing.Size(1157, 273);
+            this.panelControl7.Size = new System.Drawing.Size(884, 322);
             this.panelControl7.TabIndex = 1;
             // 
             // terraGridC
@@ -1060,7 +1104,7 @@
             this.terraGridC.MainView = this.gridViewTerra;
             this.terraGridC.MenuManager = this.ribbonControl1;
             this.terraGridC.Name = "terraGridC";
-            this.terraGridC.Size = new System.Drawing.Size(1153, 269);
+            this.terraGridC.Size = new System.Drawing.Size(880, 318);
             this.terraGridC.TabIndex = 2;
             this.terraGridC.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
             this.gridViewTerra,
@@ -1070,8 +1114,9 @@
             // 
             this.gridViewTerra.GridControl = this.terraGridC;
             this.gridViewTerra.Name = "gridViewTerra";
-            this.gridViewTerra.OptionsBehavior.EditorShowMode = DevExpress.Utils.EditorShowMode.Click;
+            this.gridViewTerra.OptionsBehavior.Editable = false;
             this.gridViewTerra.CellValueChanging += new DevExpress.XtraGrid.Views.Base.CellValueChangedEventHandler(this.gridViewTerra_CellValueChanging);
+            this.gridViewTerra.Click += new System.EventHandler(this.gridViewTerra_Click);
             this.gridViewTerra.DoubleClick += new System.EventHandler(this.gridView6_DoubleClick);
             // 
             // gridView7
@@ -1088,7 +1133,7 @@
             this.panelControl8.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelControl8.Location = new System.Drawing.Point(0, 0);
             this.panelControl8.Name = "panelControl8";
-            this.panelControl8.Size = new System.Drawing.Size(1157, 55);
+            this.panelControl8.Size = new System.Drawing.Size(884, 55);
             this.panelControl8.TabIndex = 0;
             // 
             // cbxTerraStatus
@@ -1137,15 +1182,26 @@
             this.cbxRooms.Id = 10;
             this.cbxRooms.Name = "cbxRooms";
             // 
+            // ribbonPageGroup1
+            // 
+            this.ribbonPageGroup1.AllowTextClipping = false;
+            this.ribbonPageGroup1.Glyph = ((System.Drawing.Image)(resources.GetObject("ribbonPageGroup1.Glyph")));
+            this.ribbonPageGroup1.ItemLinks.Add(this.barButtonItem1);
+            this.ribbonPageGroup1.ItemLinks.Add(this.barBtEditRecord);
+            this.ribbonPageGroup1.ItemLinks.Add(this.barButtonItem3);
+            this.ribbonPageGroup1.Name = "ribbonPageGroup1";
+            this.ribbonPageGroup1.ShowCaptionButton = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1308, 476);
+            this.ClientSize = new System.Drawing.Size(1035, 525);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.ribbonControl1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Недвижимость";
+            
             this.Load += new System.EventHandler(this.Form1_Load);
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.xtraTabControl1)).EndInit();
@@ -1173,6 +1229,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemCbxTerraMaxArea)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemCbxTerraCity)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemCbxTerraDistrict)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.repositoryItemTerraId)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.repositoryItemRealtId)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemCbxFloors)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemCbxObjType)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemRadioGroup2)).EndInit();
@@ -1226,7 +1284,6 @@
         private DevExpress.XtraBars.BarButtonItem barButtonItem3;
         private DevExpress.XtraBars.BarButtonItem BtLoadXML;
         private DevExpress.XtraBars.Ribbon.RibbonPage ribbonPage1;
-        private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroup1;
         private DevExpress.XtraBars.Ribbon.RibbonPage ribbonPage2;
         private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroup2;
         private DevExpress.XtraBars.Ribbon.RibbonMiniToolbar ribbonMiniToolbar1;
@@ -1318,6 +1375,12 @@
         private DevExpress.XtraBars.BarButtonItem barBtTerraClear;
         private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroup4;
         private DevExpress.XtraBars.BarButtonItem barBtAgents;
+        private DevExpress.XtraBars.BarEditItem beTerraId;
+        private DevExpress.XtraEditors.Repository.RepositoryItemTextEdit repositoryItemTerraId;
+        private DevExpress.XtraBars.BarEditItem beRealtId;
+        private DevExpress.XtraEditors.Repository.RepositoryItemTextEdit repositoryItemRealtId;
+        private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroup5;
+        private DevExpress.XtraBars.Ribbon.RibbonPageGroup ribbonPageGroup1;
 
     }
 }

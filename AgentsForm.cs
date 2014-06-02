@@ -16,6 +16,7 @@ namespace realty
     {
 
         private ClFunctions func;
+        public AdminStruct Current_Agent;
         public AgentsForm()
         {
             InitializeComponent();
@@ -29,8 +30,10 @@ namespace realty
 
             MySqlDataAdapter daRealty;
 
-            string sql = "SELECT agents.Ag_id, agents.Ag_FIO, agents.Ag_phone, agents.Ag_mail, ";
-            sql += " agency.Aname, agents.Ag_login, agents.Ag_isadmin,  (SELECT COUNT(realestate.Rid) FROM realestate WHERE realestate.Ragent_code = agents.Ag_id) as  count1 ,  (SELECT COUNT(terra.TId) FROM terra WHERE terra.Tagent_code = agents.Ag_id) as  count2 FROM   agents  LEFT JOIN  agency  ON   agents.Ag_agency=agency.Aid ";
+            string sql = "SELECT agents.Ag_id, agents.Ag_FIO as fio, agents.Ag_phone as phone , agents.Ag_mail as mail, ";
+            sql += " agency.Aname as agencyNm,   (SELECT COUNT(realestate.Rid) FROM realestate WHERE realestate.Ragent_code = agents.Ag_id) as  count1 ,"+
+                "  (SELECT COUNT(terra.TId) FROM terra WHERE terra.Tagent_code = agents.Ag_id) as  count2 , agents.Ag_login as login , agents.Ag_isadmin as isadmin, "+
+                " agency.Aid as agencyID FROM   agents  LEFT JOIN  agency  ON   agents.Ag_agency=agency.Aid ";
 
 
             
@@ -50,10 +53,10 @@ namespace realty
                 dsRealty.Tables[0].Columns[3].ReadOnly = true;
                 dsRealty.Tables[0].Columns[4].Caption = "Агентство";
                 dsRealty.Tables[0].Columns[4].ReadOnly = true;
-                dsRealty.Tables[0].Columns[7].Caption = "Кол-во объектов недвижимости";
-                dsRealty.Tables[0].Columns[7].ReadOnly = true;
-                dsRealty.Tables[0].Columns[8].Caption = "Кол-во земельных участков";
-                dsRealty.Tables[0].Columns[8].ReadOnly = true;
+                dsRealty.Tables[0].Columns[5].Caption = "Кол-во объектов недвижимости";
+                dsRealty.Tables[0].Columns[5].ReadOnly = true;
+                dsRealty.Tables[0].Columns[6].Caption = "Кол-во земельных участков";
+                dsRealty.Tables[0].Columns[6].ReadOnly = true;
                
 
                 try
@@ -63,9 +66,10 @@ namespace realty
                     gridCtrAgents.DataSource = null;
                     gridCtrAgents.DataSource = dsRealty.Tables[0];
                     gridView1.Columns[0].Visible = false;
-                    gridView1.Columns[5].Visible = false;
-                    gridView1.Columns[6].Visible = false;
-                  
+                    gridView1.Columns[7].Visible = false;//login
+                    gridView1.Columns[8].Visible = false;//admin
+                    gridView1.Columns[9].Visible = false;//agency_id
+                    
 
                 }
 
@@ -171,7 +175,7 @@ namespace realty
             agntForm.ShowDialog();
         }
 
-        private void gridView1_DoubleClick(object sender, EventArgs e)
+        private void gridView1_DoubleClick(object sender, EventArgs e)//agent
         {
            
             if (gridView1.SelectedRowsCount == 0) return;
@@ -184,22 +188,23 @@ namespace realty
             string id;
             DataRowView rw = (DataRowView)gridView1.GetFocusedRow();
             id = rw[0].ToString();
+            if ((id != Current_Agent.id) && !(rw["agencyID"].ToString() == Current_Agent.agency && Current_Agent.isadmin == true)) return;
             if (!Double.TryParse(id, out count)) return;
             AddEditAgentFr agntForm = new AddEditAgentFr(1); //1-edit, delete
             agntForm.Aid = id;
-            agntForm.Afio = rw[1].ToString();
-            agntForm.Aphone = rw[2].ToString();
-            agntForm.Amail = rw[3].ToString();
-            agntForm.A_agency = rw[4].ToString();
-            agntForm.Alogin = rw[5].ToString();
+            agntForm.Afio = rw["fio"].ToString();
+            agntForm.Aphone = rw["phone"].ToString();
+            agntForm.Amail = rw["mail"].ToString();
+            agntForm.A_agency = rw["agencyID"].ToString();
+            agntForm.Alogin = rw["login"].ToString();
 
-            string isadm = rw[6].ToString();
+            string isadm = rw["isadmin"].ToString();
             if (isadm == "1" || isadm.ToLower()=="true") agntForm.A_isadmin = true;
             else agntForm.A_isadmin = false;
 
             count = 0;
-            if (Double.TryParse(rw[7].ToString(), out count)) agntForm.realt_count = (long)count;
-            if (Double.TryParse(rw[8].ToString(), out count)) agntForm.terra_count = (long)count;
+            if (Double.TryParse(rw[5].ToString(), out count)) agntForm.realt_count = (long)count;
+            if (Double.TryParse(rw[6].ToString(), out count)) agntForm.terra_count = (long)count;
 
             agntForm.ShowDialog();
         }
@@ -219,6 +224,7 @@ namespace realty
             string id;
             DataRowView rw = (DataRowView)gridView2.GetFocusedRow();
             id = rw[0].ToString();
+            if (!(id== Current_Agent.agency && Current_Agent.isadmin == true)) return;
             if (!Double.TryParse(id, out count)) return;
             AddEditAgencyFr agForm = new AddEditAgencyFr(1);// редактировать
             agForm.Aid = id;

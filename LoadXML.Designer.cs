@@ -161,6 +161,7 @@
             this.ClientSize = new System.Drawing.Size(577, 348);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "LoadXML";
             this.Text = "Загрузка данных о недвижимости";

@@ -122,6 +122,7 @@
             this.Controls.Add(this.txbPhone);
             this.Controls.Add(this.txbAddress);
             this.Controls.Add(this.txbName);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "AddEditAgencyFr";
             this.Text = "Агентство";

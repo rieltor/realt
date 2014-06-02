@@ -1313,7 +1313,7 @@ namespace realty
                                     {
 
                                         pathstr1 = Images.Find(n => n.name == st.name).FullPath;
-                                        func.UploadFileToServer(pathstr1, new Uri("ftp://turangaleela:Ardonskaya209@tamarrra.net:21//www//img1//" + st.uri));
+                                        func.UploadFileToServer(pathstr1, new Uri("ftp://turangaleela:Ardonskaya209@tamarrra.net:21/www/img1/" + st.uri));
 
                                     }
                                

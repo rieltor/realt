@@ -14,6 +14,7 @@ using DevExpress.XtraGrid.Views.Grid;
 using DevExpress.XtraEditors.Repository;
 using DevExpress.XtraGrid.Columns;
 using DevExpress.XtraGrid.Views.Grid.ViewInfo;
+
 namespace realty
 {
     public partial class Form1 : Form
@@ -28,11 +29,13 @@ namespace realty
         private List<ChListStruct> TerraCheckedFields;
         private List<DistrictsStruct> TownList;
         private List<DistrictsStruct> districts;
-        private string city_code;
+        private string terraId, realtId, realtEstate_type;
         private bool SaleSearch;
         private bool ExchSearch;
         private bool RentSearch;
         private bool TerraSearch;
+        private AdminStruct Current_Agent;
+        
         public Form1()
         {
             InitializeComponent();
@@ -127,7 +130,12 @@ namespace realty
            terraFields[10].caption = "Дата сделки";
 
            terraFields[11].FieldName = "Ttrade_price";
-           terraFields[11].caption = "Стоимость сделки"; 
+           terraFields[11].caption = "Стоимость сделки";
+           terraId = "";
+           realtId = "";
+
+            realtEstate_type="";
+           
 
         }
 
@@ -141,21 +149,34 @@ namespace realty
             //очистка полей поиска
             cbxRoom.EditValue = "";
             cbxFloor.EditValue = "";
+            
 
 
             cbxFloorsNumber.EditValue = "";
 
             cbxMinPrice.EditValue = "";
-            cbxMaxPrice.EditValue = "";         
+            cbxMaxPrice.EditValue = "";
+           
+            cbxTerraMinPrice.EditValue = "";
+            cbxTerraMaxPrice.EditValue = "";
 
             cbxMinArea.EditValue = "";
             cbxMaxArea.EditValue = "";
-
+            cbxTerraMinArea.EditValue = "";
+            cbxTerraMaxArea.EditValue = "";
+            
             cbxWalls.EditValue = "";
             cbxDistrict.EditValue = "";
-            cbxCity.EditValue = "";
+            cbxTerraDistrict.EditValue = "";
             
-           
+            cbxCity.EditValue = "";
+            cbxTerraCity.EditValue = "";
+
+            terraId = "";
+            realtId = "";
+            
+            beTerraId.EditValue = "";
+            beRealtId.EditValue = "";
            
             SaleSearch = false;
             RentSearch = false;
@@ -216,8 +237,17 @@ namespace realty
 
         private void Form1_Load(object sender, EventArgs e)
         {
+
+            this.Width = (int)(Screen.PrimaryScreen.WorkingArea.Width*0.95);
+            this.Height = (int)(Screen.PrimaryScreen.WorkingArea.Width * 0.5);
+
+            FrEnter enter = new FrEnter();
+           Current_Agent = enter.showFrom();
+           if (Current_Agent.id == null || Current_Agent.id == "") { this.Close(); return; }
+
+
             RrentCheckedFields.Clear();
-            RsaleCheckedFields.Clear();
+            RsaleCheckedFields.Clear();  
             RexchCheckedFields.Clear();
             TerraCheckedFields.Clear();
             
@@ -438,7 +468,7 @@ namespace realty
             MySqlDataAdapter daRealty;
             string[] tempArray;
             string someval;
-            string sql = "SELECT realestate.Rid, realestate.Rphoto, region15.RR_town, rstreets.RS_street, ";
+            string sql = "SELECT realestate.Rid, agents.Ag_id, agency.Aid, realestate.Rphoto,  region15.RR_town, rstreets.RS_street, ";
             for (int i=0; i< RsaleCheckedFields.Count; i++)
             {
                
@@ -446,12 +476,12 @@ namespace realty
             }
             sql += " CONCAT_WS(' ',agents.Ag_FIO, ' т.', agents.Ag_phone) " +
                 " FROM   realestate,  agents, agency, region15, rstreets WHERE (realestate.Ragent_code=agents.Ag_id " +
-                " AND  region15.RR_code= realestate.Rcity"+  //agency.Aid= agents.Ag_agency AND 
+                " AND  region15.RR_code= realestate.Rcity AND agency.Aid= agents.Ag_agency "+
                 " AND rstreets.RS_code= realestate.Rstreet) AND "+
                 "  (realestate.Restate_type <> '" + func.estate_typeValues[0] +
                 "' AND  realestate.Roperation ='" + func.operationValues[0] + "')";
 
-            if (rdbEstate_type.EditValue.ToString() != "") sql += " AND realestate.Restate_type='" + rdbEstate_type.EditValue.ToString() + "'";
+            if (realtEstate_type != "") sql += " AND realestate.Restate_type='" + realtEstate_type+ "'";
             //новостройка  //вторичка
             if (ChbNewHouse.Checked == false || ChbOldHouse.Checked == false)
             {    //новостройка 
@@ -463,66 +493,74 @@ namespace realty
             if (cbxSaleStatus.SelectedIndex>=0) sql += " AND realestate.Rstatus='" + cbxSaleStatus.Text + "'";
             if (search == true)
             {
-                ///для вывода результатов поиска
-                if (cbxRoom.EditValue != null && cbxRoom.EditValue.ToString() != "") sql += " AND realestate.Rroom_quantity=" + cbxRoom.EditValue; //количество комнат
-                if (cbxFloor.EditValue != null && cbxFloor.EditValue.ToString() != "") // этаж
-                {
-                    someval = cbxFloor.EditValue.ToString();
-                    if (someval == func.floors[0]) sql += " AND realestate.Rfloor > 1";
-                    if (someval == func.floors[1]) sql += " AND realestate.Rfloor <> realestate.Rnumber_of_storeys";
-                    if (someval == func.floors[2]) sql += " AND (realestate.Rfloor <> realestate.Rnumber_of_storeys AND realestate.Rfloor > 1)";
-                }
 
-                if (cbxFloorsNumber.EditValue != null && cbxFloorsNumber.EditValue.ToString() != "") //этажность
+                if (realtId == "")
                 {
-                    someval = cbxFloorsNumber.EditValue.ToString();
-                    if (someval.IndexOf('-') > 0)
+                    ///для вывода результатов поиска
+                    if (cbxRoom.EditValue != null && cbxRoom.EditValue.ToString() != "") sql += " AND realestate.Rroom_quantity=" + cbxRoom.EditValue; //количество комнат
+                    if (cbxFloor.EditValue != null && cbxFloor.EditValue.ToString() != "") // этаж
                     {
-                        tempArray = someval.Split('-');
-                        sql += " AND (realestate.Rnumber_of_storeys >= " + tempArray[0] + " AND realestate.Rnumber_of_storeys <=" + tempArray[1] + ")";
+                        someval = cbxFloor.EditValue.ToString();
+                        if (someval == func.floors[0]) sql += " AND realestate.Rfloor > 1";
+                        if (someval == func.floors[1]) sql += " AND realestate.Rfloor <> realestate.Rnumber_of_storeys";
+                        if (someval == func.floors[2]) sql += " AND (realestate.Rfloor <> realestate.Rnumber_of_storeys AND realestate.Rfloor > 1)";
                     }
-                    else sql += " AND realestate.Rnumber_of_storeys " + someval;
-                }
-                //цена
-                if (cbxMinPrice.EditValue != null && cbxMinPrice.EditValue.ToString() != "") sql += " AND (realestate.Rprice >= " + cbxMinPrice.EditValue.ToString();
 
-                if (cbxMaxPrice.EditValue != null && cbxMaxPrice.EditValue.ToString() != "")
-                {
-                    someval = cbxMaxPrice.EditValue.ToString();
-                    if (someval != repositoryItemCbxMaxPrice.Items[repositoryItemCbxMaxPrice.Items.Count - 1].ToString())
-                        sql += " AND realestate.Rprice <= " + someval;
-                    else sql += " AND realestate.Rprice  " + someval;
-                }
-                if (cbxMinPrice.EditValue != null && cbxMinPrice.EditValue.ToString() != "") sql += ") ";
+                    if (cbxFloorsNumber.EditValue != null && cbxFloorsNumber.EditValue.ToString() != "") //этажность
+                    {
+                        someval = cbxFloorsNumber.EditValue.ToString();
+                        if (someval.IndexOf('-') > 0)
+                        {
+                            tempArray = someval.Split('-');
+                            sql += " AND (realestate.Rnumber_of_storeys >= " + tempArray[0] + " AND realestate.Rnumber_of_storeys <=" + tempArray[1] + ")";
+                        }
+                        else sql += " AND realestate.Rnumber_of_storeys " + someval;
+                    }
+                    //цена
+                    if (cbxMinPrice.EditValue != null && cbxMinPrice.EditValue.ToString() != "") sql += " AND (realestate.Rprice >= " + cbxMinPrice.EditValue.ToString();
 
-                //площадь
-                if (cbxMinArea.EditValue != null && cbxMinArea.EditValue.ToString() != "") sql += " AND (realestate.Rtotal_floor_space >= " + cbxMinArea.EditValue.ToString();
+                    if (cbxMaxPrice.EditValue != null && cbxMaxPrice.EditValue.ToString() != "")
+                    {
+                        someval = cbxMaxPrice.EditValue.ToString();
+                        if (someval != repositoryItemCbxMaxPrice.Items[repositoryItemCbxMaxPrice.Items.Count - 1].ToString())
+                            sql += " AND realestate.Rprice <= " + someval;
+                        else sql += " AND realestate.Rprice  " + someval;
+                    }
+                    if (cbxMinPrice.EditValue != null && cbxMinPrice.EditValue.ToString() != "") sql += ") ";
 
-                if (cbxMaxArea.EditValue != null && cbxMaxArea.EditValue.ToString() != "")
-                {
-                    someval = cbxMaxArea.EditValue.ToString();
-                    if (someval != repositoryItemCbxMaxArea.Items[repositoryItemCbxMaxArea.Items.Count - 1].ToString())
-                        sql += " AND realestate.Rtotal_floor_space <= " + someval;
-                    else sql += " AND realestate.Rtotal_floor_space  " + someval;
-                }
-                if (cbxMinArea.EditValue != null && cbxMinArea.EditValue.ToString() != "") sql += ") ";
-                
-                //материал стен
-                if (cbxWalls.EditValue != null && cbxWalls.EditValue.ToString() != "") sql += " AND realestate.Rwalling_type Like '%" + cbxWalls.EditValue.ToString() + "%'";
-                //город
-                if (cbxCity.EditValue != null && cbxCity.EditValue.ToString() != "")
-                {
-                    someval = TownList.Find(n => n.rr_town == cbxCity.EditValue.ToString()).rr_code;
-                    if (someval != null) sql += " AND realestate.Rcity ='" + someval + "'";
+                    //площадь
+                    if (cbxMinArea.EditValue != null && cbxMinArea.EditValue.ToString() != "") sql += " AND (realestate.Rtotal_floor_space >= " + cbxMinArea.EditValue.ToString();
+
+                    if (cbxMaxArea.EditValue != null && cbxMaxArea.EditValue.ToString() != "")
+                    {
+                        someval = cbxMaxArea.EditValue.ToString();
+                        if (someval != repositoryItemCbxMaxArea.Items[repositoryItemCbxMaxArea.Items.Count - 1].ToString())
+                            sql += " AND realestate.Rtotal_floor_space <= " + someval;
+                        else sql += " AND realestate.Rtotal_floor_space  " + someval;
+                    }
+                    if (cbxMinArea.EditValue != null && cbxMinArea.EditValue.ToString() != "") sql += ") ";
+
+                    //материал стен
+                    if (cbxWalls.EditValue != null && cbxWalls.EditValue.ToString() != "") sql += " AND realestate.Rwalling_type Like '%" + cbxWalls.EditValue.ToString() + "%'";
+                    //город
+                    if (cbxCity.EditValue != null && cbxCity.EditValue.ToString() != "")
+                    {
+                        someval = TownList.Find(n => n.rr_town == cbxCity.EditValue.ToString()).rr_code;
+                        if (someval != null) sql += " AND realestate.Rcity ='" + someval + "'";
+                    }
+                    else
+                    {
+                        //район
+                        if (cbxDistrict.EditValue != null && cbxDistrict.EditValue.ToString() != "")
+                        {
+                            someval = districts.Find(n => n.rr_town == cbxDistrict.EditValue.ToString()).rr_code;
+                            if (someval != null) sql += " AND realestate.Rdistrict_region ='" + someval + "'";
+                        }
+                    }
                 }
                 else
                 {
-                    //район
-                    if (cbxDistrict.EditValue != null && cbxDistrict.EditValue.ToString() != "")
-                    {
-                        someval = districts.Find(n => n.rr_town == cbxDistrict.EditValue.ToString()).rr_code;
-                        if (someval != null) sql += " AND realestate.Rdistrict_region ='" + someval + "'";
-                    }
+                    sql += " AND realestate.Rid=" + realtId.Trim();
                 }
             }
 
@@ -536,21 +574,20 @@ namespace realty
                 DataSet dsRealty = new DataSet();
                 daRealty.Fill(dsRealty);
              
-                dsRealty.Tables[0].Columns[2].Caption = "Населенный пункт";
-                dsRealty.Tables[0].Columns[2].ReadOnly = true;
-                dsRealty.Tables[0].Columns[3].Caption = "Улица";
-                dsRealty.Tables[0].Columns[3].ReadOnly = true;
+                dsRealty.Tables[0].Columns[4].Caption = "Населенный пункт";
+                dsRealty.Tables[0].Columns[4].ReadOnly = true;
+                dsRealty.Tables[0].Columns[5].Caption = "Улица";
+                dsRealty.Tables[0].Columns[5].ReadOnly = true;
 
                 for (int i = 0; i < RsaleCheckedFields.Count; i++)
                 {
 
-                    dsRealty.Tables[0].Columns[i + 4].ReadOnly = true;
-                    dsRealty.Tables[0].Columns[i+4].Caption = RsaleCheckedFields[i].caption;
+                    dsRealty.Tables[0].Columns[i + 6].ReadOnly = true;
+                    dsRealty.Tables[0].Columns[i+6].Caption = RsaleCheckedFields[i].caption;
                 }
                 int count = dsRealty.Tables[0].Columns.Count;
                 dsRealty.Tables[0].Columns[count-1].Caption = "Агент ,тел";
                 dsRealty.Tables[0].Columns[count-1].ReadOnly = true;
-
                 dsRealty.Tables[0].Columns.Add("Выбрать", typeof(bool));
                 
                 
@@ -567,6 +604,10 @@ namespace realty
                     RealtySaleGridC.DataSource = dsRealty.Tables[0];
                     gridViewSale.Columns[0].Visible = false;
                     gridViewSale.Columns[1].Visible = false;
+
+                    gridViewSale.Columns[2].Visible = false; //агент
+                    gridViewSale.Columns[3].Visible = false;//агентство
+
                     DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit repositoryItemCheckEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit();
 
                     gridViewSale.Columns[count].UnboundType= DevExpress.Data.UnboundColumnType.Boolean;
@@ -608,7 +649,7 @@ namespace realty
             MySqlDataAdapter daRealty;
             string[] tempArray;
             string someval;
-            string sql = "SELECT realestate.Rid, realestate.Rphoto, region15.RR_town, rstreets.RS_street, ";
+            string sql = "SELECT realestate.Rid, agents.Ag_id, agency.Aid, realestate.Rphoto, region15.RR_town, rstreets.RS_street, ";
             for (int i = 0; i < RexchCheckedFields.Count; i++)
             {
 
@@ -616,13 +657,13 @@ namespace realty
             }
             sql += " CONCAT_WS(' ',agents.Ag_FIO, ' т.', agents.Ag_phone) " +
                 " FROM   realestate LEFT JOIN  agents  ON  realestate.Ragent_code=agents.Ag_id " +
-               // " LEFT JOIN agency ON   agency.Aid= agents.Ag_agency" +
+                " LEFT JOIN agency ON   agency.Aid= agents.Ag_agency" +
                 " LEFT JOIN region15 ON  region15.RR_code= realestate.Rcity" +
                 " LEFT JOIN rstreets ON  rstreets.RS_code= realestate.Rstreet" +
                 " WHERE (realestate.Restate_type <> '" + func.estate_typeValues[0] +
                 "' AND  realestate.Roperation ='" + func.operationValues[2] + "')";
 
-            if (rdbEstate_type.EditValue.ToString() != "") sql += " AND realestate.Restate_type='" + rdbEstate_type.EditValue.ToString() + "'";
+            if (realtEstate_type != "") sql += " AND realestate.Restate_type='" + realtEstate_type + "'";
             //новостройка  //вторичка
             if (ChbNewHouse.Checked == false || ChbOldHouse.Checked == false)
             {    //новостройка 
@@ -633,66 +674,73 @@ namespace realty
             if (cbxExchStatus.SelectedIndex >= 0) sql += " AND realestate.Rstatus='" + cbxExchStatus.Text + "'";
             if (search == true)
             {
-                ///для вывода результатов поиска
-                if (cbxRoom.EditValue != null && cbxRoom.EditValue.ToString() != "") sql += " AND realestate.Rroom_quantity=" + cbxRoom.EditValue; //количество комнат
-                if (cbxFloor.EditValue != null && cbxFloor.EditValue.ToString() != "") // этаж
+                if (realtId == "")
                 {
-                    someval = cbxFloor.EditValue.ToString();
-                    if (someval == func.floors[0]) sql += " AND realestate.Rfloor > 1";
-                    if (someval == func.floors[1]) sql += " AND realestate.Rfloor <> realestate.Rnumber_of_storeys";
-                    if (someval == func.floors[2]) sql += " AND (realestate.Rfloor <> realestate.Rnumber_of_storeys AND realestate.Rfloor > 1)";
-                }
-
-                if (cbxFloorsNumber.EditValue != null && cbxFloorsNumber.EditValue.ToString() != "") //этажность
-                {
-                    someval = cbxFloorsNumber.EditValue.ToString();
-                    if (someval.IndexOf('-') > 0)
+                    ///для вывода результатов поиска
+                    if (cbxRoom.EditValue != null && cbxRoom.EditValue.ToString() != "") sql += " AND realestate.Rroom_quantity=" + cbxRoom.EditValue; //количество комнат
+                    if (cbxFloor.EditValue != null && cbxFloor.EditValue.ToString() != "") // этаж
                     {
-                        tempArray = someval.Split('-');
-                        sql += " AND (realestate.Rnumber_of_storeys >= " + tempArray[0] + " AND realestate.Rnumber_of_storeys <=" + tempArray[1] + ")";
+                        someval = cbxFloor.EditValue.ToString();
+                        if (someval == func.floors[0]) sql += " AND realestate.Rfloor > 1";
+                        if (someval == func.floors[1]) sql += " AND realestate.Rfloor <> realestate.Rnumber_of_storeys";
+                        if (someval == func.floors[2]) sql += " AND (realestate.Rfloor <> realestate.Rnumber_of_storeys AND realestate.Rfloor > 1)";
                     }
-                    else sql += " AND realestate.Rnumber_of_storeys " + someval;
-                }
-                //цена
-                if (cbxMinPrice.EditValue != null && cbxMinPrice.EditValue.ToString() != "") sql += " AND (realestate.Rprice >= " + cbxMinPrice.EditValue.ToString();
 
-                if (cbxMaxPrice.EditValue != null && cbxMaxPrice.EditValue.ToString() != "")
-                {
-                    someval = cbxMaxPrice.EditValue.ToString();
-                    if (someval != repositoryItemCbxMaxPrice.Items[repositoryItemCbxMaxPrice.Items.Count - 1].ToString())
-                        sql += " AND realestate.Rprice <= " + someval;
-                    else sql += " AND realestate.Rprice  " + someval;
-                }
-                if (cbxMinPrice.EditValue != null && cbxMinPrice.EditValue.ToString() != "") sql += ") ";
+                    if (cbxFloorsNumber.EditValue != null && cbxFloorsNumber.EditValue.ToString() != "") //этажность
+                    {
+                        someval = cbxFloorsNumber.EditValue.ToString();
+                        if (someval.IndexOf('-') > 0)
+                        {
+                            tempArray = someval.Split('-');
+                            sql += " AND (realestate.Rnumber_of_storeys >= " + tempArray[0] + " AND realestate.Rnumber_of_storeys <=" + tempArray[1] + ")";
+                        }
+                        else sql += " AND realestate.Rnumber_of_storeys " + someval;
+                    }
+                    //цена
+                    if (cbxMinPrice.EditValue != null && cbxMinPrice.EditValue.ToString() != "") sql += " AND (realestate.Rprice >= " + cbxMinPrice.EditValue.ToString();
 
-                //площадь
-                if (cbxMinArea.EditValue != null && cbxMinArea.EditValue.ToString() != "") sql += " AND (realestate.Rtotal_floor_space >= " + cbxMinArea.EditValue.ToString();
+                    if (cbxMaxPrice.EditValue != null && cbxMaxPrice.EditValue.ToString() != "")
+                    {
+                        someval = cbxMaxPrice.EditValue.ToString();
+                        if (someval != repositoryItemCbxMaxPrice.Items[repositoryItemCbxMaxPrice.Items.Count - 1].ToString())
+                            sql += " AND realestate.Rprice <= " + someval;
+                        else sql += " AND realestate.Rprice  " + someval;
+                    }
+                    if (cbxMinPrice.EditValue != null && cbxMinPrice.EditValue.ToString() != "") sql += ") ";
 
-                if (cbxMaxArea.EditValue != null && cbxMaxArea.EditValue.ToString() != "")
-                {
-                    someval = cbxMaxArea.EditValue.ToString();
-                    if (someval != repositoryItemCbxMaxArea.Items[repositoryItemCbxMaxArea.Items.Count - 1].ToString())
-                        sql += " AND realestate.Rtotal_floor_space <= " + someval;
-                    else sql += " AND realestate.Rtotal_floor_space  " + someval;
-                }
-                if (cbxMinArea.EditValue != null && cbxMinArea.EditValue.ToString() != "") sql += ") ";
+                    //площадь
+                    if (cbxMinArea.EditValue != null && cbxMinArea.EditValue.ToString() != "") sql += " AND (realestate.Rtotal_floor_space >= " + cbxMinArea.EditValue.ToString();
 
-                //материал стен
-                if (cbxWalls.EditValue != null && cbxWalls.EditValue.ToString() != "") sql += " AND realestate.Rwalling_type Like '%" + cbxWalls.EditValue.ToString() + "%'";
-                //город
-                if (cbxCity.EditValue != null && cbxCity.EditValue.ToString() != "")
-                {
-                    someval = TownList.Find(n => n.rr_town == cbxCity.EditValue.ToString()).rr_code;
-                    if (someval != null) sql += " AND realestate.Rcity ='" + someval + "'";
+                    if (cbxMaxArea.EditValue != null && cbxMaxArea.EditValue.ToString() != "")
+                    {
+                        someval = cbxMaxArea.EditValue.ToString();
+                        if (someval != repositoryItemCbxMaxArea.Items[repositoryItemCbxMaxArea.Items.Count - 1].ToString())
+                            sql += " AND realestate.Rtotal_floor_space <= " + someval;
+                        else sql += " AND realestate.Rtotal_floor_space  " + someval;
+                    }
+                    if (cbxMinArea.EditValue != null && cbxMinArea.EditValue.ToString() != "") sql += ") ";
+
+                    //материал стен
+                    if (cbxWalls.EditValue != null && cbxWalls.EditValue.ToString() != "") sql += " AND realestate.Rwalling_type Like '%" + cbxWalls.EditValue.ToString() + "%'";
+                    //город
+                    if (cbxCity.EditValue != null && cbxCity.EditValue.ToString() != "")
+                    {
+                        someval = TownList.Find(n => n.rr_town == cbxCity.EditValue.ToString()).rr_code;
+                        if (someval != null) sql += " AND realestate.Rcity ='" + someval + "'";
+                    }
+                    else
+                    {
+                        //район
+                        if (cbxDistrict.EditValue != null && cbxDistrict.EditValue.ToString() != "")
+                        {
+                            someval = districts.Find(n => n.rr_town == cbxDistrict.EditValue.ToString()).rr_code;
+                            if (someval != null) sql += " AND realestate.Rdistrict_region ='" + someval + "'";
+                        }
+                    }
                 }
                 else
                 {
-                    //район
-                    if (cbxDistrict.EditValue != null && cbxDistrict.EditValue.ToString() != "")
-                    {
-                        someval = districts.Find(n => n.rr_town == cbxDistrict.EditValue.ToString()).rr_code;
-                        if (someval != null) sql += " AND realestate.Rdistrict_region ='" + someval + "'";
-                    }
+                    sql += " AND realestate.Rid=" + realtId.Trim();
                 }
             }
 
@@ -706,16 +754,16 @@ namespace realty
                 DataSet dsRealty = new DataSet();
                 daRealty.Fill(dsRealty);
 
-                dsRealty.Tables[0].Columns[2].Caption = "Населенный пункт";
-                dsRealty.Tables[0].Columns[2].ReadOnly = true;
-                dsRealty.Tables[0].Columns[3].Caption = "Улица";
-                dsRealty.Tables[0].Columns[3].ReadOnly = true;
+                dsRealty.Tables[0].Columns[4].Caption = "Населенный пункт";
+                dsRealty.Tables[0].Columns[4].ReadOnly = true;
+                dsRealty.Tables[0].Columns[5].Caption = "Улица";
+                dsRealty.Tables[0].Columns[5].ReadOnly = true;
 
                 for (int i = 0; i < RexchCheckedFields.Count; i++)
                 {
 
-                    dsRealty.Tables[0].Columns[i + 4].ReadOnly = true;
-                    dsRealty.Tables[0].Columns[i + 4].Caption = RexchCheckedFields[i].caption;
+                    dsRealty.Tables[0].Columns[i + 6].ReadOnly = true;
+                    dsRealty.Tables[0].Columns[i + 6].Caption = RexchCheckedFields[i].caption;
                 }
                 int count = dsRealty.Tables[0].Columns.Count;
                 dsRealty.Tables[0].Columns[count - 1].Caption = "Агент ,тел";
@@ -736,6 +784,8 @@ namespace realty
                     RealtyExchGridC.DataSource = dsRealty.Tables[0];
                     gridViewExch.Columns[0].Visible = false;
                     gridViewExch.Columns[1].Visible = false;
+                    gridViewExch.Columns[2].Visible = false;
+                    gridViewExch.Columns[3].Visible = false;
                     DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit repositoryItemCheckEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit();
                     gridViewExch.Columns[count].ColumnEdit = repositoryItemCheckEdit1;
                     gridViewExch.Columns[count].UnboundType = DevExpress.Data.UnboundColumnType.Boolean;
@@ -772,7 +822,7 @@ namespace realty
         {
 
             MySqlDataAdapter daRealty;
-            string sql = "SELECT realestate.Rid, realestate.Rphoto, region15.RR_town, rstreets.RS_street,";
+            string sql = "SELECT realestate.Rid, agents.Ag_id, agency.Aid, realestate.Rphoto, region15.RR_town, rstreets.RS_street,";
             string[] tempArray;
             string someval;
 
@@ -783,13 +833,13 @@ namespace realty
             }
             sql += " CONCAT_WS(' ',agents.Ag_FIO, 'т.', agents.Ag_phone) " +
                 " FROM   realestate LEFT JOIN  agents  ON  realestate.Ragent_code=agents.Ag_id " +
-                //" LEFT JOIN agency ON   agency.Aid= agents.Ag_agency" +
+                " LEFT JOIN agency ON   agency.Aid= agents.Ag_agency" +
                 " LEFT JOIN region15 ON  region15.RR_code= realestate.Rcity" +
                 " LEFT JOIN rstreets ON  rstreets.RS_code= realestate.Rstreet" +
                 " WHERE (realestate.Restate_type <> '" + func.estate_typeValues[0] +
                 "' AND  realestate.Roperation ='" + func.operationValues[1] + "')";
 
-            if (rdbEstate_type.EditValue.ToString() != "") sql += " AND realestate.Restate_type='" + rdbEstate_type.EditValue.ToString() + "'";
+            if (realtEstate_type != "") sql += " AND realestate.Restate_type='" + realtEstate_type + "'";
             //новостройка  //вторичка
             if (ChbNewHouse.Checked == false ||  ChbOldHouse.Checked == false) 
             {    //новостройка 
@@ -799,68 +849,75 @@ namespace realty
             }
 
             if (cbxRentStatus.SelectedIndex >= 0) sql += " AND realestate.Rstatus='" + cbxRentStatus.Text + "'";
-            if (search == true)
+            if (search == true  )
             {
-                ///для вывода результатов поиска
-                if (cbxRoom.EditValue != null && cbxRoom.EditValue.ToString() != "") sql += " AND realestate.Rroom_quantity=" + cbxRoom.EditValue; //количество комнат
-                if (cbxFloor.EditValue != null && cbxFloor.EditValue.ToString() != "") // этаж
+                if (realtId == "")
                 {
-                    someval = cbxFloor.EditValue.ToString();
-                    if (someval == func.floors[0]) sql += " AND realestate.Rfloor > 1";
-                    if (someval == func.floors[1]) sql += " AND realestate.Rfloor <> realestate.Rnumber_of_storeys";
-                    if (someval == func.floors[2]) sql += " AND (realestate.Rfloor <> realestate.Rnumber_of_storeys AND realestate.Rfloor > 1)";
-                }
-
-                if (cbxFloorsNumber.EditValue != null && cbxFloorsNumber.EditValue.ToString() != "") //этажность
-                {
-                    someval = cbxFloorsNumber.EditValue.ToString();
-                    if (someval.IndexOf('-') > 0)
+                    ///для вывода результатов поиска
+                    if (cbxRoom.EditValue != null && cbxRoom.EditValue.ToString() != "") sql += " AND realestate.Rroom_quantity=" + cbxRoom.EditValue; //количество комнат
+                    if (cbxFloor.EditValue != null && cbxFloor.EditValue.ToString() != "") // этаж
                     {
-                        tempArray = someval.Split('-');
-                        sql += " AND (realestate.Rnumber_of_storeys >= " + tempArray[0] + " AND realestate.Rnumber_of_storeys <=" + tempArray[1] + ")";
+                        someval = cbxFloor.EditValue.ToString();
+                        if (someval == func.floors[0]) sql += " AND realestate.Rfloor > 1";
+                        if (someval == func.floors[1]) sql += " AND realestate.Rfloor <> realestate.Rnumber_of_storeys";
+                        if (someval == func.floors[2]) sql += " AND (realestate.Rfloor <> realestate.Rnumber_of_storeys AND realestate.Rfloor > 1)";
                     }
-                    else sql += " AND realestate.Rnumber_of_storeys " + someval;
-                }
-                //цена
-                if (cbxMinPrice.EditValue != null && cbxMinPrice.EditValue.ToString() != "") sql += " AND (realestate.Rprice >= " + cbxMinPrice.EditValue.ToString();
 
-                if (cbxMaxPrice.EditValue != null && cbxMaxPrice.EditValue.ToString() != "")
-                {
-                    someval = cbxMaxPrice.EditValue.ToString();
-                    if (someval != repositoryItemCbxMaxPrice.Items[repositoryItemCbxMaxPrice.Items.Count - 1].ToString())
-                        sql += " AND realestate.Rprice <= " + someval;
-                    else sql += " AND realestate.Rprice  " + someval;
-                }
-                if (cbxMinPrice.EditValue != null && cbxMinPrice.EditValue.ToString() != "") sql += ") ";
+                    if (cbxFloorsNumber.EditValue != null && cbxFloorsNumber.EditValue.ToString() != "") //этажность
+                    {
+                        someval = cbxFloorsNumber.EditValue.ToString();
+                        if (someval.IndexOf('-') > 0)
+                        {
+                            tempArray = someval.Split('-');
+                            sql += " AND (realestate.Rnumber_of_storeys >= " + tempArray[0] + " AND realestate.Rnumber_of_storeys <=" + tempArray[1] + ")";
+                        }
+                        else sql += " AND realestate.Rnumber_of_storeys " + someval;
+                    }
+                    //цена
+                    if (cbxMinPrice.EditValue != null && cbxMinPrice.EditValue.ToString() != "") sql += " AND (realestate.Rprice >= " + cbxMinPrice.EditValue.ToString();
 
-                //площадь
-                if (cbxMinArea.EditValue != null && cbxMinArea.EditValue.ToString() != "") sql += " AND (realestate.Rtotal_floor_space >= " + cbxMinArea.EditValue.ToString();
+                    if (cbxMaxPrice.EditValue != null && cbxMaxPrice.EditValue.ToString() != "")
+                    {
+                        someval = cbxMaxPrice.EditValue.ToString();
+                        if (someval != repositoryItemCbxMaxPrice.Items[repositoryItemCbxMaxPrice.Items.Count - 1].ToString())
+                            sql += " AND realestate.Rprice <= " + someval;
+                        else sql += " AND realestate.Rprice  " + someval;
+                    }
+                    if (cbxMinPrice.EditValue != null && cbxMinPrice.EditValue.ToString() != "") sql += ") ";
 
-                if (cbxMaxArea.EditValue != null && cbxMaxArea.EditValue.ToString() != "")
-                {
-                    someval = cbxMaxArea.EditValue.ToString();
-                    if (someval != repositoryItemCbxMaxArea.Items[repositoryItemCbxMaxArea.Items.Count - 1].ToString())
-                        sql += " AND realestate.Rtotal_floor_space <= " + someval;
-                    else sql += " AND realestate.Rtotal_floor_space  " + someval;
-                }
-                if (cbxMinArea.EditValue != null && cbxMinArea.EditValue.ToString() != "") sql += ") ";
-               
-                //материал стен
-                if (cbxWalls.EditValue != null && cbxWalls.EditValue.ToString() != "") sql += " AND realestate.Rwalling_type Like '%" + cbxWalls.EditValue.ToString() + "%'";
-                //город
-                if (cbxCity.EditValue != null && cbxCity.EditValue.ToString() != "")
-                {
-                    someval = TownList.Find(n => n.rr_town == cbxCity.EditValue.ToString()).rr_code;
-                    if (someval != null) sql += " AND realestate.Rcity ='" + someval + "'";
+                    //площадь
+                    if (cbxMinArea.EditValue != null && cbxMinArea.EditValue.ToString() != "") sql += " AND (realestate.Rtotal_floor_space >= " + cbxMinArea.EditValue.ToString();
+
+                    if (cbxMaxArea.EditValue != null && cbxMaxArea.EditValue.ToString() != "")
+                    {
+                        someval = cbxMaxArea.EditValue.ToString();
+                        if (someval != repositoryItemCbxMaxArea.Items[repositoryItemCbxMaxArea.Items.Count - 1].ToString())
+                            sql += " AND realestate.Rtotal_floor_space <= " + someval;
+                        else sql += " AND realestate.Rtotal_floor_space  " + someval;
+                    }
+                    if (cbxMinArea.EditValue != null && cbxMinArea.EditValue.ToString() != "") sql += ") ";
+
+                    //материал стен
+                    if (cbxWalls.EditValue != null && cbxWalls.EditValue.ToString() != "") sql += " AND realestate.Rwalling_type Like '%" + cbxWalls.EditValue.ToString() + "%'";
+                    //город
+                    if (cbxCity.EditValue != null && cbxCity.EditValue.ToString() != "")
+                    {
+                        someval = TownList.Find(n => n.rr_town == cbxCity.EditValue.ToString()).rr_code;
+                        if (someval != null) sql += " AND realestate.Rcity ='" + someval + "'";
+                    }
+                    else
+                    {
+                        //район
+                        if (cbxDistrict.EditValue != null && cbxDistrict.EditValue.ToString() != "")
+                        {
+                            someval = districts.Find(n => n.rr_town == cbxDistrict.EditValue.ToString()).rr_code;
+                            if (someval != null) sql += " AND realestate.Rdistrict_region ='" + someval + "'";
+                        }
+                    }
                 }
                 else
                 {
-                    //район
-                    if (cbxDistrict.EditValue != null && cbxDistrict.EditValue.ToString() != "")
-                    {
-                        someval = districts.Find(n => n.rr_town == cbxDistrict.EditValue.ToString()).rr_code;
-                        if (someval != null) sql += " AND realestate.Rdistrict_region ='" + someval + "'";
-                    }
+                    sql += " AND realestate.Rid=" + realtId.Trim();
                 }
             }
             sql += " ORDER BY realestate.Rdate_add DESC";
@@ -872,14 +929,14 @@ namespace realty
 
                 DataSet dsRealty = new DataSet();
                 daRealty.Fill(dsRealty);
-                dsRealty.Tables[0].Columns[2].Caption = "Населенный пункт";
-                dsRealty.Tables[0].Columns[2].ReadOnly = true;
-                dsRealty.Tables[0].Columns[3].Caption = "Улица";
-                dsRealty.Tables[0].Columns[3].ReadOnly = true;
+                dsRealty.Tables[0].Columns[4].Caption = "Населенный пункт";
+                dsRealty.Tables[0].Columns[4].ReadOnly = true;
+                dsRealty.Tables[0].Columns[5].Caption = "Улица";
+                dsRealty.Tables[0].Columns[5].ReadOnly = true;
                 for (int i = 0; i < RrentCheckedFields.Count; i++)
                 {
-                    dsRealty.Tables[0].Columns[i+4].ReadOnly = true;
-                    dsRealty.Tables[0].Columns[i+4].Caption = RrentCheckedFields[i].caption;            
+                    dsRealty.Tables[0].Columns[i+6].ReadOnly = true;
+                    dsRealty.Tables[0].Columns[i+6].Caption = RrentCheckedFields[i].caption;            
                 }
                 int count = dsRealty.Tables[0].Columns.Count;
              
@@ -897,6 +954,8 @@ namespace realty
                     RealtyRentGridC.DataSource = dsRealty.Tables[0];
                     gridViewRent.Columns[0].Visible = false;
                     gridViewRent.Columns[1].Visible = false;
+                    gridViewRent.Columns[2].Visible = false;
+                    gridViewRent.Columns[3].Visible = false;
                     DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit repositoryItemCheckEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit();
                     
                      gridViewRent.Columns[count].ColumnEdit = repositoryItemCheckEdit1;
@@ -938,7 +997,7 @@ namespace realty
             MySqlDataAdapter daRealty;
             
             string someval;
-            string sql = "SELECT terra.TId, terra.Tphoto,  region15.RR_town, rstreets.RS_street, ";
+            string sql = "SELECT terra.TId,  agents.Ag_id, agency.Aid, terra.Tphoto,  region15.RR_town, rstreets.RS_street, ";
             for (int i = 0; i < TerraCheckedFields.Count; i++)
             {
                
@@ -946,7 +1005,7 @@ namespace realty
             }
             sql += " CONCAT_WS(' ',agents.Ag_FIO, 'т.', agents.Ag_phone) " +
                 " FROM   terra  LEFT JOIN  agents  ON  terra.Tagent_code=agents.Ag_id " +
-               // " LEFT JOIN agency ON   agency.Aid= agents.Ag_agency" +
+                " LEFT JOIN agency ON   agency.Aid= agents.Ag_agency" +
                 " LEFT JOIN region15 ON  region15.RR_code= terra.Tcity" +
                 " LEFT JOIN rstreets ON  rstreets.RS_code= terra.Tstreet";
 
@@ -954,45 +1013,52 @@ namespace realty
             if (cbxTerraStatus.SelectedIndex >= 0) sql += " WHERE terra.Tstatus='" + cbxTerraStatus.Text + "'";
             if (search == true)
             {
-             
-                //цена
-                if (cbxTerraMinPrice.EditValue != null && cbxTerraMinPrice.EditValue.ToString() != "") sql += " AND (terra.Tprice >= " + cbxTerraMinPrice.EditValue.ToString();
 
-                if (cbxTerraMaxPrice.EditValue != null && cbxTerraMaxPrice.EditValue.ToString() != "")
+                if (terraId == "")
                 {
-                    someval = cbxTerraMaxPrice.EditValue.ToString();
-                    if (someval != repositoryItemCbxTerraMaxPrice.Items[repositoryItemCbxTerraMaxPrice.Items.Count - 1].ToString())
-                        sql += " AND terra.Tprice <= " + someval;
-                    else sql += " AND terra.Tprice  " + someval;
-                }
-                if (cbxTerraMinPrice.EditValue != null && cbxTerraMinPrice.EditValue.ToString() != "") sql += ") ";
+                    //цена
+                    if (cbxTerraMinPrice.EditValue != null && cbxTerraMinPrice.EditValue.ToString() != "") sql += " AND (terra.Tprice >= " + cbxTerraMinPrice.EditValue.ToString();
 
-                //площадь
-                if (cbxTerraMinArea.EditValue != null && cbxTerraMinArea.EditValue.ToString() != "") sql += " AND (terra.Tground_area >= " + cbxTerraMinArea.EditValue.ToString();
+                    if (cbxTerraMaxPrice.EditValue != null && cbxTerraMaxPrice.EditValue.ToString() != "")
+                    {
+                        someval = cbxTerraMaxPrice.EditValue.ToString();
+                        if (someval != repositoryItemCbxTerraMaxPrice.Items[repositoryItemCbxTerraMaxPrice.Items.Count - 1].ToString())
+                            sql += " AND terra.Tprice <= " + someval;
+                        else sql += " AND terra.Tprice  " + someval;
+                    }
+                    if (cbxTerraMinPrice.EditValue != null && cbxTerraMinPrice.EditValue.ToString() != "") sql += ") ";
 
-                if (cbxTerraMaxArea.EditValue != null && cbxTerraMaxArea.EditValue.ToString() != "")
-                {
-                    someval = cbxTerraMaxArea.EditValue.ToString();
-                    if (someval != repositoryItemCbxTerraMaxArea.Items[repositoryItemCbxTerraMaxArea.Items.Count - 1].ToString())
-                        sql += " AND terra.Tground_area <= " + someval;
-                    else sql += " AND terra.Tground_area  " + someval;
-                }
-                if (cbxTerraMinArea.EditValue != null && cbxTerraMinArea.EditValue.ToString() != "") sql += ") ";
+                    //площадь
+                    if (cbxTerraMinArea.EditValue != null && cbxTerraMinArea.EditValue.ToString() != "") sql += " AND (terra.Tground_area >= " + cbxTerraMinArea.EditValue.ToString();
 
-             //город
-                if (cbxTerraCity.EditValue != null && cbxTerraCity.EditValue.ToString() != "")
-                {
-                    someval = TownList.Find(n => n.rr_town == cbxTerraCity.EditValue.ToString()).rr_code;
-                    if (someval != null) sql += " AND terra.Tcity ='" + someval + "'";
+                    if (cbxTerraMaxArea.EditValue != null && cbxTerraMaxArea.EditValue.ToString() != "")
+                    {
+                        someval = cbxTerraMaxArea.EditValue.ToString();
+                        if (someval != repositoryItemCbxTerraMaxArea.Items[repositoryItemCbxTerraMaxArea.Items.Count - 1].ToString())
+                            sql += " AND terra.Tground_area <= " + someval;
+                        else sql += " AND terra.Tground_area  " + someval;
+                    }
+                    if (cbxTerraMinArea.EditValue != null && cbxTerraMinArea.EditValue.ToString() != "") sql += ") ";
+
+                    //город
+                    if (cbxTerraCity.EditValue != null && cbxTerraCity.EditValue.ToString() != "")
+                    {
+                        someval = TownList.Find(n => n.rr_town == cbxTerraCity.EditValue.ToString()).rr_code;
+                        if (someval != null) sql += " AND terra.Tcity ='" + someval + "'";
+                    }
+                    else
+                    {
+                        //район
+                        if (cbxTerraDistrict.EditValue != null && cbxTerraDistrict.EditValue.ToString() != "")
+                        {
+                            someval = districts.Find(n => n.rr_town == cbxTerraDistrict.EditValue.ToString()).rr_code;
+                            if (someval != null) sql += " AND terra.Tdistrict_region ='" + someval + "'";
+                        }
+                    }
                 }
                 else
                 {
-                    //район
-                    if (cbxTerraDistrict.EditValue != null && cbxTerraDistrict.EditValue.ToString() != "")
-                    {
-                        someval = districts.Find(n => n.rr_town == cbxTerraDistrict.EditValue.ToString()).rr_code;
-                        if (someval != null) sql += " AND terra.Tdistrict_region ='" + someval + "'";
-                    }
+                    sql += " AND terra.TId=" + terraId.Trim();
                 }
             }
 
@@ -1006,16 +1072,16 @@ namespace realty
                 DataSet dsRealty = new DataSet();
                 daRealty.Fill(dsRealty);
              
-                dsRealty.Tables[0].Columns[2].Caption = "Населенный пункт";
-                dsRealty.Tables[0].Columns[2].ReadOnly = true;
-                dsRealty.Tables[0].Columns[3].Caption = "Улица";
-                dsRealty.Tables[0].Columns[3].ReadOnly = true;
+                dsRealty.Tables[0].Columns[4].Caption = "Населенный пункт";
+                dsRealty.Tables[0].Columns[4].ReadOnly = true;
+                dsRealty.Tables[0].Columns[5].Caption = "Улица";
+                dsRealty.Tables[0].Columns[5].ReadOnly = true;
 
                 for (int i = 0; i < TerraCheckedFields.Count; i++)
                 {
 
-                    dsRealty.Tables[0].Columns[i + 4].ReadOnly = true;
-                    dsRealty.Tables[0].Columns[i+4].Caption =TerraCheckedFields[i].caption;
+                    dsRealty.Tables[0].Columns[i + 6].ReadOnly = true;
+                    dsRealty.Tables[0].Columns[i+6].Caption =TerraCheckedFields[i].caption;
                 }
                 int count = dsRealty.Tables[0].Columns.Count;
                 dsRealty.Tables[0].Columns[count-1].Caption = "Агент ,тел";
@@ -1036,6 +1102,8 @@ namespace realty
                     terraGridC.DataSource = dsRealty.Tables[0];
                     gridViewTerra.Columns[0].Visible = false;
                     gridViewTerra.Columns[1].Visible = false;
+                    gridViewTerra.Columns[2].Visible = false;
+                    gridViewTerra.Columns[3].Visible = false;
                     DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit repositoryItemCheckEdit1 = new DevExpress.XtraEditors.Repository.RepositoryItemCheckEdit();
 
                     gridViewTerra.Columns[count].ColumnEdit = repositoryItemCheckEdit1;
@@ -1150,26 +1218,13 @@ namespace realty
                 ExchSearch = false;
                 RefreshExch(ExchSearch);
             }
+
+            clearFields();
         }
 
         private void rdbEstate_type_EditValueChanged(object sender, EventArgs e)
         {
-            if (xtraTabControl1.SelectedTabPageIndex == 0)
-            {
-                RefreshSale(SaleSearch);
-            }
-
-            if (xtraTabControl1.SelectedTabPageIndex == 1)
-            {
-                RefreshRent(RentSearch);
-
-            }
-
-            if (xtraTabControl1.SelectedTabPageIndex == 2)
-            {
-                RefreshExch(ExchSearch);
-            }
-            rdbEstate_type.Refresh();
+          
         }
 
         private void ChbNewHouse_CheckedChanged(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
@@ -1300,35 +1355,26 @@ namespace realty
             {
                 TerraSearch = false;
                 RefreshTerra(TerraSearch);
+                clearFields();
             }
         }
 
         private void barBtAgents_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
         {
             AgentsForm Agf = new AgentsForm();
+            Agf.Current_Agent = Current_Agent;
             Agf.Show();
         }
 
         private void gridView1_DoubleClick(object sender, EventArgs e) //недвижимость продажа
         {
             if (gridViewSale.SelectedRowsCount == 0 ||  gridViewSale.FocusedColumn.Name =="colВыбрать") return;
-
+            
             Point pt = gridViewSale.GridControl.PointToClient(Control.MousePosition);
             GridHitInfo info = gridViewSale.CalcHitInfo(pt);
             if (!info.InRow && !info.InRowCell) return;
-
-            int[] rwind = gridViewSale.GetSelectedRows();
-            DataRowView rw = (DataRowView)gridViewSale.GetRow(rwind[0]);
-
-            Program.objectedit = new editform(rw[0].ToString(), false);
-            Program.objectedit.ShowDialog();
-            //if (rw != null) MessageBox.Show(rw[0].ToString());
-        }
-
-        public void TableUpdate(int estatetype, int operation)
-        {
-
-            RefreshSale(SaleSearch);
+            DataRowView rw=(DataRowView)gridViewSale.GetFocusedRow();   
+            if (rw != null) MessageBox.Show(rw[0].ToString());
         }
 
         private void gridView2_DoubleClick(object sender, EventArgs e)//недвижимость аренда
@@ -1337,11 +1383,7 @@ namespace realty
             Point pt = gridViewRent.GridControl.PointToClient(Control.MousePosition);
             GridHitInfo info = gridViewRent.CalcHitInfo(pt);
             if (!info.InRow && !info.InRowCell) return;
-
-            int[] rwind = gridViewRent.GetSelectedRows();
-            DataRowView rw = (DataRowView)gridViewRent.GetRow(rwind[0]);
-            Program.objectedit = new editform(rw[0].ToString(), true);
-            Program.objectedit.ShowDialog();
+            DataRowView rw = (DataRowView)gridViewRent.GetFocusedRow(); 
         }
 
         private void gridView4_DoubleClick(object sender, EventArgs e)//недвижимость обмен
@@ -1349,8 +1391,8 @@ namespace realty
             if (gridViewExch.SelectedRowsCount == 0 || gridViewExch.FocusedColumn.Name == "colВыбрать") return;
             Point pt = gridViewExch.GridControl.PointToClient(Control.MousePosition);
             GridHitInfo info = gridViewExch.CalcHitInfo(pt);
-            int[] rwind = gridViewExch.GetSelectedRows();
-            DataRowView rw = (DataRowView)gridViewExch.GetRow(rwind[0]);
+            if (!info.InRow && !info.InRowCell) return;
+            DataRowView rw = (DataRowView)gridViewExch.GetFocusedRow(); 
         }
 
         private void gridView6_DoubleClick(object sender, EventArgs e) //земельные участки
@@ -1358,8 +1400,8 @@ namespace realty
             if (gridViewTerra.SelectedRowsCount == 0 || gridViewTerra.FocusedColumn.Name == "colВыбрать") return;
             Point pt = gridViewTerra.GridControl.PointToClient(Control.MousePosition);
             GridHitInfo info = gridViewTerra.CalcHitInfo(pt);
-            int[] rwind = gridViewTerra.GetSelectedRows();
-            DataRowView rw = (DataRowView)gridViewTerra.GetRow(rwind[0]);
+           
+            DataRowView rw = (DataRowView)gridViewTerra.GetFocusedRow(); 
         }
 
         private void barBtEditRecord_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
@@ -1443,41 +1485,289 @@ namespace realty
        
         private void gridViewSale_CellValueChanging(object sender, CellValueChangedEventArgs e)
         {
-            if (e.Column.Name != "colВыбрать") return;
-            DataRowView rw = (DataRowView)gridViewSale.GetFocusedRow();
-            rw[gridViewSale.Columns.Count - 1] = Convert.ToBoolean(e.Value);
+         
+            //if (e.Column.Name != "colВыбрать")  return;            
+            //DataRowView rw = (DataRowView)gridViewSale.GetFocusedRow();           
+            //rw[gridViewSale.Columns.Count - 1] = Convert.ToBoolean(e.Value);
          
         }
 
         private void gridViewRent_CellValueChanging(object sender, CellValueChangedEventArgs e)
         {
-            if (e.Column.Name != "colВыбрать") return;
-            DataRowView rw = (DataRowView)gridViewRent.GetFocusedRow();
-            rw[gridViewRent.Columns.Count - 1] = Convert.ToBoolean(e.Value);
+            //if (e.Column.Name != "colВыбрать") return;
+            //DataRowView rw = (DataRowView)gridViewRent.GetFocusedRow();
+            //rw[gridViewRent.Columns.Count - 1] = Convert.ToBoolean(e.Value);
           
         }
 
         private void gridViewExch_CellValueChanging(object sender, CellValueChangedEventArgs e)
         {
-            if (e.Column.Name != "colВыбрать") return;
-            DataRowView rw = (DataRowView)gridViewExch.GetFocusedRow();
-            rw[gridViewExch.Columns.Count - 1] = Convert.ToBoolean(e.Value);
+            //if (e.Column.Name != "colВыбрать") return;
+            //DataRowView rw = (DataRowView)gridViewExch.GetFocusedRow();
+            //rw[gridViewExch.Columns.Count - 1] = Convert.ToBoolean(e.Value);
            
         }
 
         private void gridViewTerra_CellValueChanging(object sender, CellValueChangedEventArgs e)
         {
-            if (e.Column.Name != "colВыбрать") return;
-            DataRowView rw = (DataRowView)gridViewTerra.GetFocusedRow();
-            rw[gridViewTerra.Columns.Count - 1] = Convert.ToBoolean(e.Value);
+            //if (e.Column.Name != "colВыбрать") return;
+            //DataRowView rw = (DataRowView)gridViewTerra.GetFocusedRow();
+            //rw[gridViewTerra.Columns.Count - 1] = Convert.ToBoolean(e.Value);
         }
 
-        private void barButtonItem1_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        private void beTerraId_EditValueChanged(object sender, EventArgs e)
         {
-            Program.objectedit = new editform();
-            Program.objectedit.newrecord = true;
-            Program.objectedit.ShowDialog();
+            terraId = ((DevExpress.XtraBars.BarEditItem)sender).EditValue.ToString();
         }
+
+        private void beRealtId_EditValueChanged(object sender, EventArgs e)
+        {
+            realtId = ((DevExpress.XtraBars.BarEditItem) sender).EditValue.ToString();
+        }
+
+    
+
+        private void repositoryItemRdbEstate_type_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (xtraTabControl1.SelectedTabPageIndex == 0)
+            {
+                RefreshSale(SaleSearch);
+            }
+
+            if (xtraTabControl1.SelectedTabPageIndex == 1)
+            {
+                RefreshRent(RentSearch);
+
+            }
+
+            if (xtraTabControl1.SelectedTabPageIndex == 2)
+            {
+                RefreshExch(ExchSearch);
+            }
+            //rdbEstate_type.Refresh();
+        }
+
+        private void repositoryItemRdbEstate_type_EditValueChanged(object sender, EventArgs e)
+        {
+            realtEstate_type = ((DevExpress.XtraEditors.RadioGroup)sender).EditValue.ToString();
+        }
+
+        private void gridViewSale_Click(object sender, EventArgs e)
+        {
+            if (gridViewSale.FocusedColumn.Name != "colВыбрать") return;
+            Point pt = gridViewSale.GridControl.PointToClient(Control.MousePosition);
+            GridHitInfo info = gridViewSale.CalcHitInfo(pt);
+            if (!info.InRow && !info.InRowCell) return;
+            DataRowView rw = (DataRowView)gridViewSale.GetFocusedRow();
+            int num=gridViewSale.Columns.Count - 1;           
+            if (rw[num].Equals(true)) rw[num] = false;
+            else  rw[num] = true;
+            gridViewSale.RefreshRow(gridViewSale.FocusedRowHandle);
+
+        }
+
+        private void gridViewRent_Click(object sender, EventArgs e)
+        {
+            if (gridViewRent.FocusedColumn.Name != "colВыбрать") return;
+            Point pt = gridViewRent.GridControl.PointToClient(Control.MousePosition);
+            GridHitInfo info = gridViewRent.CalcHitInfo(pt);
+            if (!info.InRow && !info.InRowCell) return;
+            DataRowView rw = (DataRowView)gridViewRent.GetFocusedRow();
+            int num = gridViewRent.Columns.Count - 1;
+            if (rw[num].Equals(true)) rw[num] = false;
+            else rw[num] = true;
+            gridViewRent.RefreshRow(gridViewRent.FocusedRowHandle);
+        }
+
+        private void gridViewExch_Click(object sender, EventArgs e)
+        {
+            if (gridViewExch.FocusedColumn.Name != "colВыбрать") return;
+            Point pt = gridViewExch.GridControl.PointToClient(Control.MousePosition);
+            GridHitInfo info = gridViewExch.CalcHitInfo(pt);
+            if (!info.InRow && !info.InRowCell) return;
+            DataRowView rw = (DataRowView)gridViewExch.GetFocusedRow();
+            int num = gridViewExch.Columns.Count - 1;
+            if (rw[num].Equals(true)) rw[num] = false;
+            else rw[num] = true;
+            gridViewExch.RefreshRow(gridViewExch.FocusedRowHandle);
+        }
+
+        private void gridViewTerra_Click(object sender, EventArgs e)
+        {
+            if (gridViewTerra.FocusedColumn.Name != "colВыбрать") return;
+            Point pt = gridViewTerra.GridControl.PointToClient(Control.MousePosition);
+            GridHitInfo info = gridViewTerra.CalcHitInfo(pt);
+            if (!info.InRow && !info.InRowCell) return;
+            DataRowView rw = (DataRowView)gridViewTerra.GetFocusedRow();
+            int num = gridViewTerra.Columns.Count - 1;
+            if (rw[num].Equals(true)) rw[num] = false;
+            else rw[num] = true;
+            gridViewTerra.RefreshRow(gridViewTerra.FocusedRowHandle);
+        }
+
+        private void barButtonItem3_ItemClick(object sender, DevExpress.XtraBars.ItemClickEventArgs e)
+        {
+            if (MessageBox.Show("Удалить выбранные записи?", "Предупреждение", MessageBoxButtons.OKCancel) == DialogResult.Cancel) return;
+            string val = "";
+            DataRowView rw = null;
+            int i = 0;
+            string sql = "", nodelete = "", msg="", photo="";
+            if (xtraTabControl1.SelectedTabPageIndex == 0) //sale
+            {
+                int count = gridViewSale.RowCount;
+
+                sql="DELETE FROM realestate WHERE ";
+                nodelete = "";
+                for (i = 0; i < count; i++)
+                {
+                    rw = (DataRowView)gridViewSale.GetRow(i);
+                    val = rw[gridViewSale.Columns.Count - 1].ToString();
+
+                    if (val.ToLower() == "true")
+                    {
+                        //проверка прав rw[1]-gentid, rw[2] agencyid, rw[3]-photo
+                        if (rw[1].ToString() == Current_Agent.id || (Current_Agent.isadmin == true && rw[2].ToString() == Current_Agent.agency))
+                        {
+                            sql += "Rid=" + rw[0].ToString();
+                            sql += " OR ";
+                            photo = rw[3].ToString();
+                            if (photo != "") func.deleteFiles(photo);
+                        }
+                        else nodelete += ", " + rw[0].ToString();
+                    }
+
+                }
+                if (sql.IndexOf(" OR ") > 0)
+                {
+                    sql = sql.Remove(sql.Length - 4, 4);
+                    msg = func.InsertToTable(sql);
+                    if (msg != "") { MessageBox.Show("Возникла ошибка при удалении объекта"); }
+                    else { MessageBox.Show("Объект удален");}
+                    RefreshSale(SaleSearch); //refresh grid after deleting
+
+                }
+                if (nodelete != "")
+                {
+                    nodelete = nodelete.Remove(0, 1);
+                    MessageBox.Show("У текущего пользователя нет прав на удаление объекта(-ов) #:" + nodelete);
+                }
+              
+            }
+
+            if (xtraTabControl1.SelectedTabPageIndex == 1) //rent
+            {
+                int count = gridViewRent.RowCount;
+                sql = "DELETE FROM realestate WHERE ";
+                for (i = 0; i < count; i++)
+                {
+                    rw = (DataRowView)gridViewRent.GetRow(i);
+                    val = rw[gridViewRent.Columns.Count - 1].ToString();
+                    if (val.ToLower() == "true")
+                    {
+                        if (rw[1].ToString() == Current_Agent.id || (Current_Agent.isadmin == true && rw[2].ToString() == Current_Agent.agency))
+                        {
+                            sql += "Rid=" + rw[0].ToString();
+                            sql += " OR ";
+                            photo = rw[3].ToString();
+                            if (photo != "") func.deleteFiles(photo);
+                        }
+                        else nodelete += "," + rw[0].ToString();
+                    }
+
+                }
+                if (sql.IndexOf(" OR ") > 0)
+                {
+                    sql = sql.Remove(sql.Length - 4, 4);
+                    msg = func.InsertToTable(sql);
+                    if (msg != "") { MessageBox.Show("Возникла ошибка при удалении объекта"); }
+                    else { MessageBox.Show("Объект удален"); }
+                    RefreshRent(RentSearch);
+                }
+                if (nodelete != "")
+                {
+                    nodelete = nodelete.Remove(0, 1);
+                    MessageBox.Show("У текущего пользователя нет прав на удаление объекта(-ов) #:" + nodelete);
+                }
+
+            }
+            if (xtraTabControl1.SelectedTabPageIndex == 2)//exchange
+            {
+                int count = gridViewExch.RowCount;
+                sql = "DELETE FROM realestate WHERE ";
+                for (i = 0; i < count; i++)
+                {
+                    rw = (DataRowView)gridViewExch.GetRow(i);
+                    val = rw[gridViewExch.Columns.Count - 1].ToString();
+                    if (val.ToLower() == "true")
+                    {
+                        if (rw[1].ToString() == Current_Agent.id || (Current_Agent.isadmin == true && rw[2].ToString() == Current_Agent.agency))
+                        {
+                            sql += "Rid=" + rw[0].ToString();
+                            sql += " OR ";
+                            photo = rw[3].ToString();
+                            if (photo != "") func.deleteFiles(photo);
+                           
+                        }
+                        else nodelete += "," + rw[0].ToString();
+                    }
+
+                }
+                if (sql.IndexOf(" OR ") > 0)
+                {
+                    sql = sql.Remove(sql.Length - 4, 4);
+                    msg = func.InsertToTable(sql);
+                    if (msg != "") { MessageBox.Show("Возникла ошибка при удалении объекта"); }
+                    else { MessageBox.Show("Объект удален"); }
+                    RefreshExch(ExchSearch);
+                }
+                if (nodelete != "")
+                {
+                    nodelete = nodelete.Remove(0, 1);
+                    MessageBox.Show("У текущего пользователя нет прав на удаление объекта(-ов) #:" + nodelete);
+                }
+            }
+
+            if (xtraTabControl1.SelectedTabPageIndex == 3) //terra
+            {
+
+                int count = gridViewTerra.RowCount;
+                sql = "DELETE FROM terra WHERE ";
+                for (i = 0; i < count; i++)
+                {
+                    rw = (DataRowView)gridViewTerra.GetRow(i);
+                    val = rw[gridViewTerra.Columns.Count - 1].ToString();
+                    if (val.ToLower() == "true")
+                    {
+                        if (rw[1].ToString() == Current_Agent.id || (Current_Agent.isadmin == true && rw[2].ToString() == Current_Agent.agency))
+                        {
+                            sql += "TId=" + rw[0].ToString();
+                            sql += " OR ";
+                            photo = rw[3].ToString();
+                            if (photo != "") func.deleteFiles(photo);
+                        }
+                        else nodelete += "," + rw[0].ToString();
+                    }
+
+                }
+                if (sql.IndexOf(" OR ") > 0)
+                {
+                    sql = sql.Remove(sql.Length - 4, 4);
+                    msg = func.InsertToTable(sql);
+                    if (msg != "") { MessageBox.Show("Возникла ошибка при удалении объекта"); }
+                    else { MessageBox.Show("Объект удален"); }
+                    RefreshTerra(TerraSearch);
+                }
+                if (nodelete != "")
+                {
+                    nodelete = nodelete.Remove(0, 1);
+                    MessageBox.Show("У текущего пользователя нет прав на удаление объекта(-ов) #:" + nodelete);
+                }
+            }
+
+
+        }
+
+        
 
       
 

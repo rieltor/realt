@@ -10,9 +10,6 @@ namespace realty
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        /// 
-        static public Agent user;
-        static public editform objectedit;
         [STAThread]
         static void Main()
         {

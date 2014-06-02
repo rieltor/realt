@@ -59,7 +59,14 @@ namespace realty
 
     }
 
-
+    public struct AdminStruct
+    {
+        public string id;
+        public string FIO;
+        public string agency;
+        public bool isadmin;
+        public string mail;
+    }
 
     public struct AddressStruct
     {
@@ -107,12 +114,12 @@ namespace realty
             //"server=tamarrra.net;user=user;database=RealtMultiBase;password=Ardonskaya209;charset=utf8";
             //"server=localhost;user=root;database=realtmultibase;password=robingood;CharSet=utf8";
 
- 
 
-            roomlayotValues = new string[] { "1 к-та проходная", "Готовый офис", "Комната с альковом", "Не правильная","По проекту", "Полураспашонка", "Правильная", "Раздельное","Распашонка", "Свободная", "Смежное", "Смежно-параллельное","Смежно-раздельное", "Типовая", "Трамвай", "Улучшенная"};
+
+            roomlayotValues = new string[] { "1 к-та проходная", "Готовый офис", "Комната с альковом", "Не правильная", "По проекту", "Полураспашонка", "Правильная", "Раздельное", "Раздельная", "Распашонка", "Свободная", "Смежное", "Смежная", "Смежно-параллельное", "Смежно-раздельное", "Типовая", "Трамвай", "Улучшенная" };
             propertyValues = new string[] { "Госакт", "Государственная", "Дачный кооператив", "Долевое участие", "Муниципальная", "Неприватиз", "Общественная", "Частная (приватизированная)"};
             sewerageValues = new string[] { "Горканализация", "Своя канализация", "Удобаство во дворе" };
-            housetypeValues = new string[] { "Бельгийка", "Болгарка", "Бывшее общежитие", "Высотка", "Гостинка", "Индивидуальный проект", "Коммуналка", "Малосемейка", "Общежитие", "Новый дом", "Особняк", "Сталинка", "Хрущевка", "Брежневка", "Новостройка", "Старый фонд", "Улучшенной планировки" };
+            housetypeValues = new string[] { "Бельгийка", "Болгарка", "Бывшее общежитие", "Высотка", "Гостинка", "Индивидуальный проект", "Коммуналка", "Малосемейка", "Общежитие", "Новый дом", "Особняк", "Сталинка", "Хрущевка", "Брежневка", "Новостройка", "Старый фонд", "Улучшенной планировки", "Кирпичный" };
             
             balconyValues = new string[] { "Застеклен", "Не застеклен", "Зарешечен" };
             loggiaValues = new string[] { "Застеклена", "Не застеклена", "Зарешечена" };
@@ -123,8 +130,8 @@ namespace realty
             gasValues = new string[] { "Природный", "Электроплита", "Балонный", "Нет" };
             heatValues = new string[] { "ТЭЦ", "Электрическое", "Автономное", "Нет" };
             bathValues = new string[] { "Туалет/ванна", "Туалет/душ", "Только туалет", "Совмещенный", "Отсутствует", "Раздельный" };
-            waterValues = new string[] { "Холодная (водопровод)", "Горячая (ТЭЦ)", "Горячая (бойлер)", "Холодная (колодец)", "Горячая (АГВ)", "Водопровода нет" };
-            wallValues = new string[] { "Блочный", "Кирпичный", "Монолитный", "Панельный" ,"Камень-известняк", "Железобетон", "Каркасно-монолитный", "Кирпично-монолитный","Монолитно-бетонный", "Блочно-кирпичный"};
+            waterValues = new string[] { "Холодная (водопровод)", "Горячая (ТЭЦ)", "Горячая (тэц)", "Горячая (бойлер)", "Холодная (колодец)", "Горячая (АГВ)", "Водопровода нет" };
+            wallValues = new string[] { "Блочный", "Кирпичный", "Монолитный", "Панельный", "Камень-известняк", "Железобетон", "Каркасно-монолитный", "Кирпично-монолитный", "Монолитно-бетонный", "Блочно-кирпичный" };
             conditionValues = new string[] { "Хорошее", "Евроремонт", "Косметический ремонт", "Капитальный ремонт", "Нужен ремонт" };
             purpose_landValues = new string[] { "ИЖС", "Садоводчество", "Сельскохозяйственное", "Коммерческое"};
             front_door_typeValues = new string[] { " Простая", "Железная", "Двойная", "Деревянная", "Бронированная" };
@@ -488,7 +495,7 @@ namespace realty
             message = "";
 
 
-            string sql = "SELECT Ag_id, Ag_FIO  FROM  agents WHERE Ag_Agency="+agency+" ORDER Ag_FIO ";
+            string sql = "SELECT Ag_id, Ag_FIO  FROM  agents WHERE Ag_Agency="+agency+" ORDER by Ag_FIO ";
             MySqlConnection conn = new MySqlConnection(connStr);
 
             try
@@ -554,16 +561,73 @@ namespace realty
             }
             while (readBytes != 0);
 
-            Console.WriteLine("Writing {0} bytes to the stream.", count);
-            // IMPORTANT: Close the request stream before sending the request.
+            //Console.WriteLine("Writing {0} bytes to the stream.", count);
+            //// IMPORTANT: Close the request stream before sending the request.
             requestStream.Close();
 
             FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-            Console.WriteLine("Upload status: {0}, {1}", response.StatusCode, response.StatusDescription);
+            //Console.WriteLine("Upload status: {0}, {1}", response.StatusCode, response.StatusDescription);
 
+            bool res;
+            if (response.StatusCode == FtpStatusCode.CommandOK) res = true;
+            else res = false;
             response.Close();
             stream.Close();
-            return true;
+            return res;
+        }
+
+        public void deleteFiles(string path)
+        {
+
+            string[] files;
+            if (path.IndexOf(';') > 0)
+            {
+                files = path.Split(';');
+            }
+            else files = new string[] {path};
+                for (int i = 0; i < files.Length; i++)
+                {
+                    if (files[i].IndexOf("http://tamarrra.net/img1/") >= 0)
+                    {
+                        files[i] = files[i].Replace("http://tamarrra.net/img1/", "");
+                    }
+                    DeleteFileFromServer(files[i]);
+                }
+
+            
+        }
+
+        public bool DeleteFileFromServer(string fileName)
+        {
+              bool res;
+            try
+            {
+                Uri serverUri = new Uri("ftp://turangaleela:Ardonskaya209@tamarrra.net:21/www/img1/" + fileName);
+
+                // The URI described by serverUri should use the ftp:// scheme. 
+                // It contains the name of the file on the server. 
+                // Example: ftp://contoso.com/someFile.txt. 
+                //  
+                // The fileName parameter identifies the file containing the data to be uploaded. 
+
+                if (serverUri.Scheme != Uri.UriSchemeFtp)
+                {
+                    return false;
+                }
+                // Get the object used to communicate with the server.
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(serverUri);
+                request.Method = WebRequestMethods.Ftp.DeleteFile;
+                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+              
+                if (response.StatusCode == FtpStatusCode.CommandOK) res = true;
+                else res = false;
+                response.Close();
+            }
+            catch
+            {
+                res = false;
+            }
+            return res;
         }
 
         private bool UploadFiletoFtp(string sourceFile)
@@ -593,6 +657,8 @@ namespace realty
             response.Close();
             return res;
         }
+
+
 
 
         // Encrypt the string.
@@ -675,29 +741,7 @@ namespace realty
         }
 
 
-        public bool DeleteFileFromServer(string fileName, Uri serverUri)
-        {
-            try
-            {
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create(serverUri);
-                //If you need to use network credentials
-                //request.Credentials = new NetworkCredential(ftpUsername, ftpPassword);
-                //additionally, if you want to use the current user's network credentials, just use:
-                //System.Net.CredentialCache.DefaultNetworkCredentials
-
-                request.Method = WebRequestMethods.Ftp.DeleteFile;
-                FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-                // MessageBox.Show(response.StatusDescription);
-
-                bool res;
-                if (response.StatusCode == FtpStatusCode.CommandOK) res = true;
-                else res = false;
-
-                response.Close();
-                return res;
-            }
-            catch { return true; }
-        }
+  
   public string GetMD5String(string s)  
     {  
       //переводим строку в байт-массим  

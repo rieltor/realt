@@ -56,10 +56,12 @@ namespace realty
             string mail=txbMail.Text.Trim();
             string login=txbLogin.Text.Trim();
             string pass=txbPassword.Text.Trim();
+            string pass1=txbPass2.Text.Trim();
             string agency=agencies[cbxAgency.SelectedIndex].id;
             string isadmin = "0";
             string phone = txbPhone.Text.Trim();
             if (chbxAdmin.Checked == true) isadmin = "1";
+            if (pass != "" && pass != pass1) { MessageBox.Show("Пароли не совпадают "); return; }
             if (fio == "" || login == "" || pass == "" || (agency == null || agency == "") || mail=="") { MessageBox.Show(" Не заполнены все поля"); return; }
             pass = func.GetMD5String(pass);
             string sql = "INSERT INTO agents  SET Ag_FIO='" + fio + "' , Ag_agency=" + agency + ", Ag_login='" + login + "'";
@@ -77,16 +79,22 @@ namespace realty
             string mail = txbMail.Text.Trim();
             string login = txbLogin.Text.Trim();
             string pass = txbPassword.Text.Trim();
+            string pass1 = txbPass2.Text.Trim();
             string agency = agencies[cbxAgency.SelectedIndex].id;
             string isadmin = "0";
             string phone = txbPhone.Text.Trim();
             if (chbxAdmin.Checked == true) isadmin = "1";
+            if (pass != "" && pass != pass1) { MessageBox.Show("Пароли не совпадают "); return; }
             if (fio == "" || login == "" || (agency == null || agency == "") || mail == "") { MessageBox.Show(" Не заполнены все поля"); return; }
-            pass = func.GetMD5String(pass);
+         
             string sql = "UPDATE agents  SET Ag_FIO='" + fio + "' , Ag_agency=" + agency + ", Ag_login='" + login + "'";
             sql += ", Ag_isadmin=" + isadmin + ", Ag_mail='" + mail + "'";
             if (phone != "") sql += ", Ag_phone ='" + phone + "'";
-            if (pass != "") sql += ", Ag_password ='" + pass + "'";
+            if (pass != "")
+            {
+                pass = func.GetMD5String(pass);
+                sql += ", Ag_password ='" + pass + "'";
+            }
             sql += " WHERE Ag_id=" + Aid;
            
             string mesg = func.InsertToTable(sql);
@@ -111,13 +119,13 @@ namespace realty
             }
             cbxAgency.SelectedIndex = 0;
 
-            if (operation == 0)
+            if (operation == 0)//add
             {
                 Deletepanel.Visible = false;
             }
             else
             {
-                if (operation == 1)
+                if (operation == 1)//edit delete
                 {
                     Deletepanel.Visible = true;                    
                     cbxAgents.Items.Clear();
